@@ -1,4 +1,4 @@
-# Mandatory_||
+# Exam Project - Minified IntelliOptima
 
 ## Running the Application
 To run the application, follow these steps:
