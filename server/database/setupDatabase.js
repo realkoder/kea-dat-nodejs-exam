@@ -51,24 +51,23 @@ function setupDatabase(isDeleteMode) {
       })
       .catch((error) => databaseLogger.error(`Error creating admin user with login: ${error}`));
 
-
     User.create({
-      _id: "663006030739377a94826bf3",
-      name: "jon doe",
-      email: "jondoe@testuser.com",
+      _id: '663006030739377a94826bf3',
+      name: 'jon doe',
+      email: 'jondoe@testuser.com',
     })
-    .then(async (testUser) => {
-      databaseLogger.info('Created test user');
-      const hashedPassword = await bcrypt.hash("test12345", saltRounds);
+      .then(async (testUser) => {
+        databaseLogger.info('Created test user');
+        const hashedPassword = await bcrypt.hash('test12345', saltRounds);
 
-      return Login.create({
-        _id: testUser.id,
-        username: "jondoe",
-        password: hashedPassword,
+        return Login.create({
+          _id: testUser.id,
+          username: 'jondoe',
+          password: hashedPassword,
+        })
+          .then(() => databaseLogger.info('Created login for test user'));
       })
-        .then(() => databaseLogger.info('Created login for test user'));
-    })
-    .catch((error) => databaseLogger.error(`Error creating test user with login: ${error}`));
+      .catch((error) => databaseLogger.error(`Error creating test user with login: ${error}`));
   }
 }
 

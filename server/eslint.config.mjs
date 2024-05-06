@@ -25,7 +25,7 @@ export default [
         {
           "js": "never"
         }
-      ]
+      ],
     }
   },
   ...compat.extends("airbnb-base"),

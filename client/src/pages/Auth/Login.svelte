@@ -93,6 +93,7 @@
     } catch (error) {
       validationErrors = error.formErrors.fieldErrors;
       console.error('Validation errors: ', validationErrors);
+      toast.error("Your credentials was not accepted.");
     }
   }
 

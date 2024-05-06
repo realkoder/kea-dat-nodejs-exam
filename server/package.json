@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "type": "module",
-  "description": "Server for SSR, Authentication, DB-management and other backend related features for the Mandatory_|| assignment",
+  "description": "Server for SSR, Authentication, DB-management and other backend related features for minified IntelliOptima exam project",
   "main": "app.js",
   "scripts": {
     "dev": "node app.js | pino-pretty",
@@ -21,7 +21,7 @@
     "Server",
     "Backend"
   ],
-  "author": "Alex Holmberg",
+  "author": "Alex Holmberg & Alexander Christensen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Alex793x/node-full-stack-kea24/issues"
