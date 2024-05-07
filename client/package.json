@@ -31,12 +31,18 @@
     "formsnap": "^1.0.0",
     "lucide-svelte": "^0.376.1",
     "mode-watcher": "^0.3.0",
+    "rsocket-core": "0.0.27",
+    "rsocket-flowable": "0.0.27",
+    "rsocket-types": "0.0.27",
+    "rsocket-websocket-client": "0.0.27",
+    "rsocket-websocket-server": "0.0.27",
     "svelte-radix": "^1.1.0",
     "svelte-routing": "^2.12.0",
     "svelte-sonner": "^0.3.22",
     "sveltekit-superforms": "^2.12.6",
     "tailwind-merge": "^2.3.0",
     "tailwind-variants": "^0.2.1",
+    "uuid": "^9.0.1",
     "vaul-svelte": "^0.3.0",
     "zod": "^3.23.4"
   }

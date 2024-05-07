@@ -18,7 +18,15 @@
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
 
+  // RSOCKET
+  import {
+    fireAndForget,
+    initRSocket,
+    requestStream,
+  } from './modules/rsocket-client';
+
   export let url = '';
+  let rsocket;
 
   async function handleLogout() {
     const data = await genericApi.GET($BASE_URL + '/api/v1/auth/logout');
@@ -31,6 +39,23 @@
   }
 
   onMount(async () => {
+    rsocket = await initRSocket();
+    const observable = await requestStream(rsocket, 'test', 'hej');
+    const subscription = await observable.subscribe({
+      next(data) {
+        console.log('Received data:', data);
+        // Handle each piece of data as it arrives
+      },
+      error(err) {
+        console.error('Error:', err);
+        // Handle any errors that occur
+      },
+      complete() {
+        console.log('Stream completed');
+        // Handle completion of the stream
+      },
+    });
+
     if (
       !$isAuthenticated &&
       window.location.pathname !== '/' &&
@@ -61,6 +86,11 @@
 
 <Router {url}>
   <main>
+    <button
+      on:click={() => {
+        fireAndForget(rsocket, 'test', 'hej');
+      }}>CLICK IT</button
+    >
     <section>
       <Route path="/" component={Login} />
       <Route path="/home" component={Home} />

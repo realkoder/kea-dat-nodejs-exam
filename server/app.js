@@ -25,6 +25,9 @@ import errorHandlerMiddleware from './middlewares/error/errorMiddleware.js';
 // Routes
 import ServerRoutes from './routes/serverRoutes.js';
 
+// RSocket
+import CustomRSocketServer from './rsocket/RSocketServer.js';
+
 const { PORT, SESSION_SECRET, NODE_ENV } = process.env;
 const isDeleteMode = process.argv.includes('delete');
 
@@ -76,6 +79,11 @@ app.use('/api/v1', ServerRoutes);
 app.use(express.static(path.resolve('../client/dist')));
 app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
 
+// Instantiate the CustomRSocketServer with app
+const rSocketServer = new CustomRSocketServer({ app });
+rSocketServer.start();
+
+
 if (NODE_ENV === 'development') {
   const bs = browserSync.create({ logLevel: 'silent' });
   app.listen(PORT || 8080, () => {
@@ -98,7 +106,6 @@ if (NODE_ENV === 'development') {
     serverLogger.info(`Listening on port: ${PORT || 8080}`);
   });
 }
-
 (async () => {
   await redisConnection.connect();
   await databaseConnection.connect();
