@@ -98,7 +98,7 @@ class CustomRSocket {
 
       const connector = this.rsocketConnection.requestStream(
         {
-          data: Buffer.from(data),
+          data: Buffer.from(JSON.stringify(data)),
           metadata: this.createRoute(route),
         },
         2147483647,
@@ -107,10 +107,11 @@ class CustomRSocket {
             console.error('Error in chatroom stream connection', error);
             reject(error);
           },
-          onNext: async (payload, isComplete) => {
+          onNext: async (payload, isComplete) => {  
             const newMessage = payload.data
               ? { ...JSON.parse(payload.data.toString()) }
               : undefined;
+              console.log("IM", newMessage);
 
             if (newMessage?.chunk.textMessage === 'Gpt Finished message') {
               return;

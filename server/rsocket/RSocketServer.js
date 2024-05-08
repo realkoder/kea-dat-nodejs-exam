@@ -11,7 +11,10 @@ const MESSAGE_RSOCKET_ROUTING = WellKnownMimeType.MESSAGE_RSOCKET_ROUTING;
 
 class CustomRSocketServer {
   constructor() {
-    this.connections = new Map();
+
+    this.chatroomSinks = new Map();
+    this.connectionToChatroomMap = new Map();
+    this.chunkStream = new Map();  
     this.initializeServer();
   }
 
@@ -44,9 +47,14 @@ class CustomRSocketServer {
         accept: async (payload, remotePeer) => {
           return {
             fireAndForget: payload => {
+              // TODO check the message and emit it to all subscribers
               console.log(payload);
+              subscribers.forEach(subscriber => {
+                subscriber.onNext({ data: payload.data });
+              });
             },
-            requestStream: (payload, initialRequestN, responderStream) => {              
+
+            requestStream: (payload, initialRequestN, responderStream) => {
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
                 return {
@@ -77,30 +85,28 @@ class CustomRSocketServer {
 
               rsocketLogger.info(`Routing metadata: ${routingMetadata}`);
 
-              if (routingMetadata.substring(1).startsWith('test')) {
+              if (routingMetadata.substring(1).startsWith('chatroom.stream.')) {
                 const data = routingMetadata.split('.');
-                const chartflowId = data[3];
-                const chatroomId = data[4];
+                const userId = data[2];
+                const chatroomId = data[3];         
+                
+                if (!this.chatroomSinks.has(chatroomId)) {
+                  this.chatroomSinks.set(chatroomId, new Map());
+                }
+                this.chatroomSinks.get(chatroomId).set(userId, responderStream);
 
+                
                 if (payload.data) {
-                  const messages = JSON.parse(payload.data.toString());
-                  const buildConversationQuestion = messages
-                    .map(message => {
-                      const createdDate = message.chunk.createdDate
-                        ? new Date(message.chunk.createdDate * 1000)
-                        : new Date();
-                      const dateString = `${createdDate.toLocaleDateString()} ${createdDate.toLocaleTimeString()}`;
-
-                      return `[userId: ${message.chunk.userId} | textMessage: ${message.chunk.textMessage} | createdDate: ${dateString}]\n`;
-                    })
-                    .join('');
+                  const messages = JSON.parse(payload.data.toString());                  
 
                   rsocketLogger.info(`RequestStream received: ${messages}`);
                 }
               } else {
                 rsocketLogger.error(`No handler for route: ${routingMetadata}`);
                 return {
-                  cancel: () => {},
+                  cancel: () => {
+                    this.subscribers.get(chatroomId).delete(userId);
+                  },
                   request: _n => {},
                   onExtension: () => {},
                 };
@@ -164,6 +170,39 @@ class CustomRSocketServer {
   getConnectionByChatroomId(userId) {
     return this.connections.get(userId);
   }
+
+  addUserToChatroom(chatroomId, userId) {
+    if (!this.connectionToChatroomMap.has(chatroomId)) {
+      this.connectionToChatroomMap.set(chatroomId, new Set());
+    }
+    this.connectionToChatroomMap.get(chatroomId).add(userId);
+  }
+  
+  removeUserFromChatroom(chatroomId, userId) {
+    if (this.connectionToChatroomMap.has(chatroomId)) {
+      this.connectionToChatroomMap.get(chatroomId).delete(userId);
+      if (this.connectionToChatroomMap.get(chatroomId).size === 0) {
+        this.connectionToChatroomMap.delete(chatroomId);
+      }
+      if (this.chatroomSinks.has(chatroomId)) {
+        this.chatroomSinks.get(chatroomId).delete(userId);
+        if (this.chatroomSinks.get(chatroomId).size === 0) {
+          this.chatroomSinks.delete(chatroomId);
+        }
+      }
+    }
+  }
+  
+  emitReceivedMessage(chatMessage) {
+    const chatroomId = chatMessage.chatroomId;
+    const sinks = this.chatroomSinks.get(chatroomId);
+    if (sinks) {
+      sinks.forEach(sink => {
+        sink.onNext({ data: Buffer.from(JSON.stringify(chatMessage)) });
+      });
+    }
+  }
+  
 }
 
 export default CustomRSocketServer;

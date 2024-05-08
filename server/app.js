@@ -6,7 +6,6 @@ import helmet from 'helmet';
 import session from 'express-session';
 import path from 'path';
 import browserSync from 'browser-sync';
-import fs from 'fs';
 
 // Logger
 import pinoHttp from 'pino-http';
@@ -36,9 +35,6 @@ const isDeleteMode = process.argv.includes('delete');
 const serverLogger = prefixedLogger('📦 [server]: ');
 const routerLogger = prefixedLogger('🛰 [router]: ');
 const httpLogger = pinoHttp({ routerLogger, autoLogging: false }); // <--- should be manually added when you want to log full requests.
-
-// ONLY READING PAGES ONCE INSTEAD OF EACH TIM
-const CLIENT_INDEX_HTML = await fs.readFileSync(path.resolve('../client/dist/index.html'), 'utf8');
 
 // AppInitialization
 const app = express();
@@ -75,13 +71,14 @@ app.use(
     },
   }),
 );
+
 app.use(escapeXSSMiddleware);
 app.use(httpLogger);
 app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
 app.use(express.static(path.resolve('../client/dist')));
-app.get('*', (req, res) => res.sendFile(CLIENT_INDEX_HTML));
+app.get('*', (req, res) => res.sendFile('../client/dist/index.html'));
 
 // Instantiate the CustomRSocketServer with app
 const rSocketServer = new CustomRSocketServer({ app });
@@ -109,6 +106,7 @@ if (NODE_ENV === 'development') {
     serverLogger.info(`Listening on port: ${PORT || 8080}`);
   });
 }
+
 (async () => {
   await redisConnection.connect();
   await databaseConnection.connect();

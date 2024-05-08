@@ -39,26 +39,7 @@
 
   onMount(async () => {
     rsocket = await CustomRSocket.CreateAsync();
-    rsocket.requestStream('test', 'DET ER NU');
-
-    // rsocket = await initRSocket();
-    // await requestStream(rsocket, 'test', 'LOOKL').then(response => console.log(response));
-
-    // const observable = await requestStream(rsocket, 'test', 'hej');
-    // observable.subscribe({
-    //   next(data) {
-    //     console.log('Received data:', data);
-    //     // Handle each piece of data as it arrives
-    //   },
-    //   error(err) {
-    //     console.error('Error:', err);
-    //     // Handle any errors that occur
-    //   },
-    //   complete() {
-    //     console.log('Stream completed');
-    //     // Handle completion of the stream
-    //   },
-    // });
+    rsocket.requestStream('chatroom.stream.1.1', { msg: 'DET ER NU' });
 
     if (
       !$isAuthenticated &&
