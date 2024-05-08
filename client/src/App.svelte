@@ -22,7 +22,7 @@
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
 
   // Rsocket
-  import { CustomRSocket } from './modules/CustomRSocket.js';
+  import { CustomRSocket } from './modules/RSocketClient.js';
 
   export let url = '';
   let rsocket;

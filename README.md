@@ -50,6 +50,10 @@ The client is structured following a modular component-based architecture, allow
 
 In this application, server-side rendering (SSR) is achieved through Express, where the server serves the client by rendering the initial HTML on the server side and then sending it to the client. This approach improves performance, SEO, and initial page load speed by delivering fully rendered pages to the client.
 
+### References
+`Svelte-rsocket-demo` -> https://github.com/linux-china/svelte-rsocket-demo/blob/master/README.md
+`Svelte working with BUFFER` -> https://github.com/vitejs/vite/discussions/2785
+
 
 <br /> <br />
 

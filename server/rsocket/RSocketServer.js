@@ -2,6 +2,7 @@ import { CompositeMetadata, WellKnownMimeType } from 'rsocket-composite-metadata
 import { RSocketServer } from 'rsocket-core';
 import { WebsocketServerTransport } from 'rsocket-websocket-server';
 import { WebSocketServer } from 'ws';
+import { v4 as uuidv4 } from 'uuid';
 import prefixedLogger from '../utils/logger.js';
 
 const rsocketLogger = prefixedLogger('⚡ [RSocketServer]: ');
@@ -23,14 +24,29 @@ class CustomRSocketServer {
           });
         },
       }),
+      fragmentation: {
+        maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
+      },
+      resume: {
+        cacheSize: 65536, // Size of the cache for resuming, can be adjusted
+        tokenGenerator: () => {
+          return Buffer.from(uuidv4().toString());
+        },
+        reconnectFunction: attempt => {
+          let delay = Math.pow(2, attempt) * 1000; // Exponential backoff starting from 1 second
+          delay = Math.min(delay, 60000); // Cap the delay to 1 minute (60000 milliseconds)
+          return new Promise(resolve => {
+            setTimeout(resolve, delay);
+          });
+        },
+      },
       acceptor: {
         accept: async (payload, remotePeer) => {
           return {
             fireAndForget: payload => {
               console.log(payload);
             },
-            requestStream: (payload, initialRequestN, responderStream) => {
-
+            requestStream: (payload, initialRequestN, responderStream) => {              
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
                 return {

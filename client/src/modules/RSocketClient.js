@@ -23,15 +23,28 @@ class CustomRSocket {
     const client = new RSocketConnector({
       setup: {
         metadataMimeType:
-          WellKnownMimeType.MESSAGE_RSOCKET_COMPOSITE_METADATA.string,
+            WellKnownMimeType.MESSAGE_RSOCKET_COMPOSITE_METADATA.string,
         dataMimeType: 'application/json', // Set the data MIME type for JSON
         lifetime: 1800000,
         keepAlive: 500,
-      },
-      transport: new WebsocketClientTransport(connectorConnectionOptions),
-      fragmentation: {
+    },
+    transport: new WebsocketClientTransport(connectorConnectionOptions),
+    fragmentation: {
         maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
-      },
+    },
+    resume: {
+        cacheSize: 65536, // Size of the cache for resuming, can be adjusted
+        tokenGenerator: () => {
+            return Buffer.from(uuidv4().toString());
+        },
+        reconnectFunction: attempt => {
+            let delay = Math.pow(2, attempt) * 1000; // Exponential backoff starting from 1 second
+            delay = Math.min(delay, 60000); // Cap the delay to 1 minute (60000 milliseconds)
+            return new Promise(resolve => {
+                setTimeout(resolve, delay);
+            });
+        },
+    },
     });
 
     return await client.connect();

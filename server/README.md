@@ -23,6 +23,3 @@ For logging, we employ Pino, a fast and low-overhead JSON logger, with a custom 
 ### Authentication and Authorization
 
 Our server implements JWT (JSON Web Tokens) for authentication and authorization, supporting both access and refresh tokens. JWTs are a secure and efficient way to manage user sessions and permissions, allowing us to verify the identity of users and control access to protected resources.
-
-### References
-`Svelte-rsocket-demo` -> https://github.com/linux-china/svelte-rsocket-demo/blob/master/README.md
