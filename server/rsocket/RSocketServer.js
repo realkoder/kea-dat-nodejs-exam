@@ -2,7 +2,6 @@ import { CompositeMetadata, WellKnownMimeType } from 'rsocket-composite-metadata
 import { RSocketServer } from 'rsocket-core';
 import { WebsocketServerTransport } from 'rsocket-websocket-server';
 import { WebSocketServer } from 'ws';
-
 import prefixedLogger from '../utils/logger.js';
 
 const rsocketLogger = prefixedLogger('⚡ [RSocketServer]: ');
@@ -31,7 +30,7 @@ class CustomRSocketServer {
               console.log(payload);
             },
             requestStream: (payload, initialRequestN, responderStream) => {
-              console.log('IM HIT;!!!');
+
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
                 return {

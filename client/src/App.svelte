@@ -5,6 +5,9 @@
   import { ModeWatcher } from 'mode-watcher';
   import { Toaster } from '$lib/components/ui/sonner';
 
+  import { Buffer } from 'buffer';
+  globalThis.Buffer = Buffer;
+
   // Store
   import isAuthenticated, { setAuthenticatedStatus } from './stores/authStore';
   import { BASE_URL } from './stores/generalStore';
@@ -18,12 +21,8 @@
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
 
-  // RSOCKET
-  import {
-    fireAndForget,
-    initRSocket,
-    requestStream,
-  } from './modules/rsocket-client';
+  // Rsocket
+  import { CustomRSocket } from './modules/CustomRSocket.js';
 
   export let url = '';
   let rsocket;
@@ -39,22 +38,27 @@
   }
 
   onMount(async () => {
-    rsocket = await initRSocket();
-    const observable = await requestStream(rsocket, 'test', 'hej');
-    const subscription = await observable.subscribe({
-      next(data) {
-        console.log('Received data:', data);
-        // Handle each piece of data as it arrives
-      },
-      error(err) {
-        console.error('Error:', err);
-        // Handle any errors that occur
-      },
-      complete() {
-        console.log('Stream completed');
-        // Handle completion of the stream
-      },
-    });
+    rsocket = await CustomRSocket.CreateAsync();
+    rsocket.requestStream('test', 'DET ER NU');
+
+    // rsocket = await initRSocket();
+    // await requestStream(rsocket, 'test', 'LOOKL').then(response => console.log(response));
+
+    // const observable = await requestStream(rsocket, 'test', 'hej');
+    // observable.subscribe({
+    //   next(data) {
+    //     console.log('Received data:', data);
+    //     // Handle each piece of data as it arrives
+    //   },
+    //   error(err) {
+    //     console.error('Error:', err);
+    //     // Handle any errors that occur
+    //   },
+    //   complete() {
+    //     console.log('Stream completed');
+    //     // Handle completion of the stream
+    //   },
+    // });
 
     if (
       !$isAuthenticated &&
@@ -88,7 +92,7 @@
   <main>
     <button
       on:click={() => {
-        fireAndForget(rsocket, 'test', 'hej');
+        // fireAndForget(rsocket, 'test', 'hej');
       }}>CLICK IT</button
     >
     <section>
