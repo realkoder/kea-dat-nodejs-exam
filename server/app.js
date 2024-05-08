@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import session from 'express-session';
 import path from 'path';
 import browserSync from 'browser-sync';
+import fs from 'fs';
 
 // Logger
 import pinoHttp from 'pino-http';
@@ -35,6 +36,9 @@ const isDeleteMode = process.argv.includes('delete');
 const serverLogger = prefixedLogger('📦 [server]: ');
 const routerLogger = prefixedLogger('🛰 [router]: ');
 const httpLogger = pinoHttp({ routerLogger, autoLogging: false }); // <--- should be manually added when you want to log full requests.
+
+// ONLY READING PAGES ONCE INSTEAD OF EACH TIM
+const CLIENT_INDEX_HTML = await fs.readFileSync(path.resolve('../client/dist/index.html'), 'utf8');
 
 // AppInitialization
 const app = express();
@@ -77,12 +81,11 @@ app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
 app.use(express.static(path.resolve('../client/dist')));
-app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
+app.get('*', (req, res) => res.sendFile(CLIENT_INDEX_HTML));
 
 // Instantiate the CustomRSocketServer with app
 const rSocketServer = new CustomRSocketServer({ app });
 rSocketServer.start();
-
 
 if (NODE_ENV === 'development') {
   const bs = browserSync.create({ logLevel: 'silent' });
