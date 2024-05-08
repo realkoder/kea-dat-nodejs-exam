@@ -11,10 +11,9 @@ const MESSAGE_RSOCKET_ROUTING = WellKnownMimeType.MESSAGE_RSOCKET_ROUTING;
 
 class CustomRSocketServer {
   constructor() {
-
     this.chatroomSinks = new Map();
     this.connectionToChatroomMap = new Map();
-    this.chunkStream = new Map();  
+    this.chunkStream = new Map();
     this.initializeServer();
   }
 
@@ -88,16 +87,15 @@ class CustomRSocketServer {
               if (routingMetadata.substring(1).startsWith('chatroom.stream.')) {
                 const data = routingMetadata.split('.');
                 const userId = data[2];
-                const chatroomId = data[3];         
-                
+                const chatroomId = data[3];
+
                 if (!this.chatroomSinks.has(chatroomId)) {
                   this.chatroomSinks.set(chatroomId, new Map());
                 }
                 this.chatroomSinks.get(chatroomId).set(userId, responderStream);
 
-                
                 if (payload.data) {
-                  const messages = JSON.parse(payload.data.toString());                  
+                  const messages = JSON.parse(payload.data.toString());
 
                   rsocketLogger.info(`RequestStream received: ${messages}`);
                 }
@@ -177,7 +175,7 @@ class CustomRSocketServer {
     }
     this.connectionToChatroomMap.get(chatroomId).add(userId);
   }
-  
+
   removeUserFromChatroom(chatroomId, userId) {
     if (this.connectionToChatroomMap.has(chatroomId)) {
       this.connectionToChatroomMap.get(chatroomId).delete(userId);
@@ -192,7 +190,7 @@ class CustomRSocketServer {
       }
     }
   }
-  
+
   emitReceivedMessage(chatMessage) {
     const chatroomId = chatMessage.chatroomId;
     const sinks = this.chatroomSinks.get(chatroomId);
@@ -202,7 +200,6 @@ class CustomRSocketServer {
       });
     }
   }
-  
 }
 
 export default CustomRSocketServer;
