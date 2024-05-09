@@ -11,8 +11,8 @@ const MESSAGE_RSOCKET_ROUTING = WellKnownMimeType.MESSAGE_RSOCKET_ROUTING;
 
 class CustomRSocketServer {
   constructor() {
-    this.chatroomSinks = new Map();
-    this.connectionToChatroomMap = new Map();
+    //this.chatroomSinks = new Map();
+    this.connectionsToChatroomsMap = new Map(); // Key: chatroomId / value: set<{userId, connection}>
     this.chunkStream = new Map();
     this.initializeServer();
   }
@@ -46,11 +46,62 @@ class CustomRSocketServer {
         accept: async (payload, remotePeer) => {
           return {
             fireAndForget: payload => {
-              // TODO check the message and emit it to all subscribers
-              console.log(payload);
-              subscribers.forEach(subscriber => {
-                subscriber.onNext({ data: payload.data });
-              });
+              if (!payload.metadata) {
+                rsocketLogger.error('Payload metadata is undefined');
+                return {
+                  cancel: () => {},
+                  request: _n => {},
+                  onExtension: () => {},
+                };
+              }
+
+              const compositeMetadata = new CompositeMetadata(payload.metadata);
+
+              let routingMetadata;
+              for (const entry of compositeMetadata) {
+                if (entry.mimeType && entry.mimeType === MESSAGE_RSOCKET_ROUTING.toString()) {
+                  routingMetadata = entry.content.toString();
+                  break;
+                }
+              }
+
+              if (!routingMetadata) {
+                rsocketLogger.error('Routing metadata not found');
+                return {
+                  cancel: () => {},
+                  request: _n => {},
+                  onExtension: () => {},
+                };
+              }
+
+              rsocketLogger.info(`Routing metadata: ${routingMetadata}`);
+
+              if (routingMetadata.substring(1).startsWith('send.message.')) {
+                const data = routingMetadata.split('.');
+                const userId = data[2];
+                const chatroomId = data[3];
+
+                console.log(payload.data.toString('utf8'));
+
+                if (payload.data) {
+                  const messages = JSON.parse(payload.data.toString());
+
+                  rsocketLogger.info(`RequestStream received: ${messages}`);
+
+                  this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
+                    userConnection.connection.onNext({ data: payload.data });
+                  });
+                }
+              } else {
+                rsocketLogger.error(`No handler for route: ${routingMetadata}`);
+                return {
+                  cancel: () => {
+                    this.subscribers.get(chatroomId).delete(userId);
+                  },
+                  request: _n => {},
+                  onExtension: () => {},
+                };
+              }
             },
 
             requestStream: (payload, initialRequestN, responderStream) => {
@@ -89,10 +140,12 @@ class CustomRSocketServer {
                 const userId = data[2];
                 const chatroomId = data[3];
 
-                if (!this.chatroomSinks.has(chatroomId)) {
-                  this.chatroomSinks.set(chatroomId, new Map());
-                }
-                this.chatroomSinks.get(chatroomId).set(userId, responderStream);
+                // if (!this.chatroomSinks.has(chatroomId)) {
+                //   this.chatroomSinks.set(chatroomId, new Map());
+                // }
+                // this.chatroomSinks.get(chatroomId).set(userId, responderStream);
+
+                this.addUserToChatroom(chatroomId, userId, responderStream);
 
                 if (payload.data) {
                   const messages = JSON.parse(payload.data.toString());
@@ -169,11 +222,11 @@ class CustomRSocketServer {
     return this.connections.get(userId);
   }
 
-  addUserToChatroom(chatroomId, userId) {
-    if (!this.connectionToChatroomMap.has(chatroomId)) {
-      this.connectionToChatroomMap.set(chatroomId, new Set());
+  addUserToChatroom(chatroomId, userId, connection) {
+    if (!this.connectionsToChatroomsMap.has(chatroomId)) {
+      this.connectionsToChatroomsMap.set(chatroomId, new Set());
     }
-    this.connectionToChatroomMap.get(chatroomId).add(userId);
+    this.connectionsToChatroomsMap.get(chatroomId).add({ userId: userId, connection: connection });
   }
 
   removeUserFromChatroom(chatroomId, userId) {

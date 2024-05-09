@@ -78,7 +78,7 @@ app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
 app.use(express.static(path.resolve('../client/dist')));
-app.get('*', (req, res) => res.sendFile('../client/dist/index.html'));
+app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
 
 // Instantiate the CustomRSocketServer with app
 const rSocketServer = new CustomRSocketServer({ app });

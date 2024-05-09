@@ -21,11 +21,7 @@
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
 
-  // Rsocket
-  import { CustomRSocket } from './modules/RSocketClient.js';
-
   export let url = '';
-  let rsocket;
 
   async function handleLogout() {
     const data = await genericApi.GET($BASE_URL + '/api/v1/auth/logout');
@@ -38,9 +34,6 @@
   }
 
   onMount(async () => {
-    rsocket = await CustomRSocket.CreateAsync();
-    rsocket.requestStream('chatroom.stream.1.1', { msg: 'DET ER NU' });
-
     if (
       !$isAuthenticated &&
       window.location.pathname !== '/' &&
@@ -71,11 +64,6 @@
 
 <Router {url}>
   <main>
-    <button
-      on:click={() => {
-        // fireAndForget(rsocket, 'test', 'hej');
-      }}>CLICK IT</button
-    >
     <section>
       <Route path="/" component={Login} />
       <Route path="/home" component={Home} />

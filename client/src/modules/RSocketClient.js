@@ -1,17 +1,13 @@
 // RSOCKET
-import {
-  WellKnownMimeType,
-  encodeCompositeMetadata,
-  encodeRoute,
-} from 'rsocket-composite-metadata';
+import { WellKnownMimeType } from 'rsocket-composite-metadata';
 
 import { RSocketConnector } from 'rsocket-core';
 import { WebsocketClientTransport } from 'rsocket-websocket-client';
 
 //UUID
 import { v4 as uuidv4 } from 'uuid';
+import { createRoute } from './rsocketUtil';
 
-const MESSAGE_RSOCKET_ROUTING = WellKnownMimeType.MESSAGE_RSOCKET_ROUTING;
 class CustomRSocket {
   rsocketConnection;
   // Method to create a new RSocket client
@@ -23,44 +19,32 @@ class CustomRSocket {
     const client = new RSocketConnector({
       setup: {
         metadataMimeType:
-            WellKnownMimeType.MESSAGE_RSOCKET_COMPOSITE_METADATA.string,
+          WellKnownMimeType.MESSAGE_RSOCKET_COMPOSITE_METADATA.string,
         dataMimeType: 'application/json', // Set the data MIME type for JSON
         lifetime: 1800000,
         keepAlive: 500,
-    },
-    transport: new WebsocketClientTransport(connectorConnectionOptions),
-    fragmentation: {
+      },
+      transport: new WebsocketClientTransport(connectorConnectionOptions),
+      fragmentation: {
         maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
-    },
-    resume: {
+      },
+      resume: {
         cacheSize: 65536, // Size of the cache for resuming, can be adjusted
         tokenGenerator: () => {
-            return Buffer.from(uuidv4().toString());
+          return Buffer.from(uuidv4().toString());
         },
-        reconnectFunction: attempt => {
-            let delay = Math.pow(2, attempt) * 1000; // Exponential backoff starting from 1 second
-            delay = Math.min(delay, 60000); // Cap the delay to 1 minute (60000 milliseconds)
-            return new Promise(resolve => {
-                setTimeout(resolve, delay);
-            });
+        reconnectFunction: (attempt) => {
+          let delay = Math.pow(2, attempt) * 1000; // Exponential backoff starting from 1 second
+          delay = Math.min(delay, 60000); // Cap the delay to 1 minute (60000 milliseconds)
+          return new Promise((resolve) => {
+            setTimeout(resolve, delay);
+          });
         },
-    },
+      },
     });
 
     return await client.connect();
   }
-
-  createRoute = (route) => {
-    let compositeMetaData = undefined;
-    if (route) {
-      const encodedRoute = encodeRoute(route);
-
-      const map = new Map();
-      map.set(WellKnownMimeType.MESSAGE_RSOCKET_ROUTING, encodedRoute);
-      compositeMetaData = encodeCompositeMetadata(map);
-    }
-    return compositeMetaData;
-  };
 
   // Method to create a new instance of CustomRSocketClient
   static CreateAsync = async () => {
@@ -79,8 +63,8 @@ class CustomRSocket {
     return new Promise((resolve, reject) => {
       this.rsocketConnection.fireAndForget(
         {
-          data: Buffer.from(data),
-          metadata: this.createRoute(route),
+          data: Buffer.from(JSON.stringify(data)),
+          metadata: createRoute(route),
         },
         {
           onError: (e) => reject(e),
@@ -92,14 +76,14 @@ class CustomRSocket {
     });
   };
 
-  requestStream = async (route, data) => {
+  requestStream = async (route, data, chatMessages, setChatMessages) => {
     return new Promise((resolve, reject) => {
       if (!this.rsocketConnection) return;
 
       const connector = this.rsocketConnection.requestStream(
         {
           data: Buffer.from(JSON.stringify(data)),
-          metadata: this.createRoute(route),
+          metadata: createRoute(route),
         },
         2147483647,
         {
@@ -107,15 +91,17 @@ class CustomRSocket {
             console.error('Error in chatroom stream connection', error);
             reject(error);
           },
-          onNext: async (payload, isComplete) => {  
+          onNext: async (payload, isComplete) => {
             const newMessage = payload.data
-              ? { ...JSON.parse(payload.data.toString()) }
+              ? { ...JSON.parse(payload.data) }
               : undefined;
-              console.log("IM", newMessage);
+            console.log('IM', newMessage);
 
-            if (newMessage?.chunk.textMessage === 'Gpt Finished message') {
+            if (newMessage?.chunk?.textMessage === 'Gpt Finished message') {
               return;
             }
+            chatMessages.push(newMessage);
+            setChatMessages(chatMessages);
           },
           onComplete: () => {
             resolve(connector);
