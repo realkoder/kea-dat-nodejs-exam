@@ -16,12 +16,16 @@
 
   // Utils
   import genericApi from '../../utils/api/genericApi';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   // RSOCKET
   import { CustomRSocket } from '../../modules/RSocketClient';
 
+  // UUID
+  import { v4 as uuidv4 } from 'uuid';
+
   let rsocket;
+  let rsocketConnectionId = uuidv4();
   let textMessage;
   let chatMessages = [];
 
@@ -39,12 +43,9 @@
   }
 
   function sendMessage() {
-    event.preventDefault();
-    console.log('executing');
     if (rsocket) {
       rsocket.fireAndForgetMessage('send.message.1.1', { data: textMessage });
-      textMessage = '';      
-      console.log(chatMessages);
+      textMessage = '';
     }
   }
 
@@ -53,13 +54,33 @@
   }
 
   onMount(async () => {
+    console.log('ONMOUNTED');
     rsocket = await CustomRSocket.CreateAsync();
     rsocket.requestStream(
       'chatroom.stream.1.1',
-      { msg: 'DET ER NU' },
+      { data: rsocketConnectionId },
       chatMessages,
       setChatMessages,
     );
+
+    window.addEventListener('beforeunload', function (event) {
+      if (rsocket) {
+        rsocket.fireAndForgetCloseConnection('close.1.1', {
+          data: rsocketConnectionId,
+        });
+        rsocket.close();
+        console.log('CALLED');
+      }
+    });
+  });
+
+  onDestroy(() => {
+    if (rsocket) {
+      rsocket.fireAndForgetCloseConnection('close.1.1', {
+        data: rsocketConnectionId,
+      });
+      rsocket.close();
+    }
   });
 </script>
 
@@ -106,7 +127,7 @@
           />
           <div class="flex items-center p-3 pt-0">
             <Button
-              type="submit"
+              type="button"
               size="sm"
               class="ml-auto gap-1.5"
               on:click={sendMessage}

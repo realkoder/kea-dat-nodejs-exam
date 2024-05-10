@@ -59,7 +59,24 @@ class CustomRSocket {
     }
   }
 
-  fireAndForgetMessage = async (route, data) => {
+  fireAndForgetMessage = async (route, data) => {    
+    return new Promise((resolve, reject) => {
+      this.rsocketConnection.fireAndForget(
+        {
+          data: Buffer.from(JSON.stringify(data)),
+          metadata: createRoute(route),
+        },
+        {
+          onError: (e) => reject(e),
+          onComplete: () => {
+            resolve(null);
+          },
+        },
+      );
+    });
+  };
+
+  fireAndForgetCloseConnection = async (route, data) => {
     return new Promise((resolve, reject) => {
       this.rsocketConnection.fireAndForget(
         {
