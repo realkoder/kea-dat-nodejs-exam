@@ -68,7 +68,7 @@ class CustomRSocket {
         },
         {
           onError: (e) => reject(e),
-          onComplete: () => {
+          onComplete: () => {            
             resolve(null);
           },
         },
@@ -111,8 +111,7 @@ class CustomRSocket {
           onNext: async (payload, isComplete) => {
             const newMessage = payload.data
               ? { ...JSON.parse(payload.data) }
-              : undefined;
-            console.log('IM', newMessage);
+              : undefined;            
 
             if (newMessage?.chunk?.textMessage === 'Gpt Finished message') {
               return;

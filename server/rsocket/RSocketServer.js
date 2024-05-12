@@ -108,9 +108,7 @@ class CustomRSocketServer {
               } else {
                 rsocketLogger.error(`No handler for route: ${routingMetadata}`);
                 return {
-                  cancel: () => {
-                    this.subscribers.get(chatroomId).delete(userId);
-                  },
+                  cancel: () => {},
                   request: _n => {},
                   onExtension: () => {},
                 };
@@ -152,11 +150,6 @@ class CustomRSocketServer {
                 const data = routingMetadata.split('.');
                 const userId = data[2];
                 const chatroomId = data[3];
-
-                // if (!this.chatroomSinks.has(chatroomId)) {
-                //   this.chatroomSinks.set(chatroomId, new Map());
-                // }
-                // this.chatroomSinks.get(chatroomId).set(userId, responderStream);
 
                 if (payload.data) {
                   const rsocketConnectionId = JSON.parse(payload.data.toString());
@@ -244,15 +237,13 @@ class CustomRSocketServer {
       .push({ rsocketConnectionId: rsocketConnectionId, connection: connection });
   }
 
-  removeUserFromChatroom(chatroomId, rsocketConnectionId) {
-    console.log(this.connectionsToChatroomsMap);
+  removeUserFromChatroom(chatroomId, rsocketConnectionId) {    
     if (this.connectionsToChatroomsMap.has(chatroomId)) {
       this.connectionsToChatroomsMap.set(
         chatroomId,
         this.connectionsToChatroomsMap.get(chatroomId).filter(user => user.rsocketConnectionId != rsocketConnectionId),
       );
-      rsocketLogger.info('Deleted user from connectionsToChatroomsMap');
-      rsocketLogger.info(this.connectionsToChatroomsMap);
+      rsocketLogger.info('Deleted user from connectionsToChatroomsMap');      
       if (this.connectionsToChatroomsMap.get(chatroomId).size === 0) {
         this.connectionsToChatroomsMap.delete(chatroomId);
         rsocketLogger.info('Deleted connection map from connectionsToChatroomsMap');

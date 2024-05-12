@@ -54,7 +54,6 @@
   }
 
   onMount(async () => {
-    console.log('ONMOUNTED');
     rsocket = await CustomRSocket.CreateAsync();
     rsocket.requestStream(
       'chatroom.stream.1.1',
@@ -69,7 +68,6 @@
           data: rsocketConnectionId,
         });
         rsocket.close();
-        console.log('CALLED');
       }
     });
   });

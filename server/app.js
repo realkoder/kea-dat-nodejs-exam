@@ -64,7 +64,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      domain: 'localhost',
+      domain: '192.168.1.101',
       secure: NODE_ENV === 'production', // should be true in production
       sameSite: 'lax',
       maxAge: 3600000, // 1 hour
@@ -89,7 +89,7 @@ if (NODE_ENV === 'development') {
   app.listen(PORT || 8080, () => {
     serverLogger.info(`Express server listening on port: ${PORT || 8080}`);
     bs.init({
-      proxy: `http://localhost:${PORT || 8080}`,
+      proxy: `http://192.168.1.101:${PORT || 8080}`,
       files: ['../client/**/*.*'],
       ignore: '../client/node_modules/**/*.*',
       port: 3000,
