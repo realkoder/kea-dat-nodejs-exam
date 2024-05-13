@@ -1,8 +1,31 @@
-import mongoose from 'mongoose';
 import prefixedLogger from '../../../utils/logger.js';
 import Chatroom from '../model/Chatroom.js';
 
 const databaseLogger = prefixedLogger('🍃 [Database]: ');
+
+function getChatrooms() {
+  return Chatroom.find()
+    .then(fetchedChatrooms => {
+      databaseLogger.info(`Chatrooms fetched`);
+      return fetchedChatrooms;
+    })
+    .catch(error => {
+      databaseLogger.error(`Error fetching chatrooms - error: ${error}`);
+      throw error;
+    });
+}
+
+function getChatroomsById(userId) {
+  return Chatroom.find({chatroomUserCreatorId: userId})
+    .then(fetchedChatrooms => {
+      databaseLogger.info(`Chatrooms fetched by chatroomUserCreatorId`);
+      return fetchedChatrooms;
+    })
+    .catch(error => {
+      databaseLogger.error(`Error fetching chatrooms by chatroomUserCreatorId - error: ${error}`);
+      throw error;
+    });
+}
 
 function create(chatroom) {
   return Chatroom.create(chatroom)
@@ -66,6 +89,8 @@ function deleteById(chatroomId) {
 }
 
 export default {
+  getChatrooms,
+  getChatroomsById,
   create,
   findByIdPopulatedWithMessages,
   updateChatroomById,

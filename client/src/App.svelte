@@ -1,7 +1,6 @@
 <script>
   import { Router, Route } from 'svelte-routing';
   import { onMount } from 'svelte';
-  import { toast } from 'svelte-sonner';
   import { ModeWatcher } from 'mode-watcher';
   import { Toaster } from '$lib/components/ui/sonner';
 
@@ -14,24 +13,14 @@
 
   // Utils
   import { verifyAuth, redirectToLogin } from './utils/api/auth';
-  import genericApi from './utils/api/genericApi';
 
   // Pages
   import Home from './pages/Home/Home.svelte';
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
+  import Chat from './pages/Chat/Chat.svelte';
 
   export let url = '';
-
-  async function handleLogout() {
-    const data = await genericApi.GET($BASE_URL + '/api/v1/auth/logout');
-    if (data.status >= 200 && data.status <= 300) {
-      isAuthenticated.set(false);
-      toast(`You've successfully logged out!`);
-    } else {
-      toast('Something went wrong logging you out, please try again!');
-    }
-  }
 
   onMount(async () => {
     if (
@@ -67,6 +56,7 @@
     <section>
       <Route path="/" component={Login} />
       <Route path="/home" component={Home} />
+      <Route path="/chat" component={Chat} />
       <Route path="/reset-password" component={ResetPassword} />
     </section>
   </main>

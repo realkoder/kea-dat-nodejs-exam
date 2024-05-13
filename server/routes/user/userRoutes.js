@@ -4,6 +4,9 @@ import UserController from '../../domains/users/controller/userController.js';
 const router = Router();
 
 // GET
+router.get('/', UserController.getUsers);
+
+// GET
 router.get('/:email', UserController.findUserByEmail);
 
 // PUT

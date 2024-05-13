@@ -10,7 +10,7 @@ function GET(url) {
     },
     credentials: 'include',
   })
-    .then((response) => {
+    .then((response) => {      
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
       return response;
     })

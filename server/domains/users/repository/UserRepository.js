@@ -3,6 +3,18 @@ import prefixedLogger from '../../../utils/logger.js';
 
 const databaseLogger = prefixedLogger('🍃 [Database]: ');
 
+function get() {
+  return User.find()
+    .then(fetchedUsers => {
+      databaseLogger.info(`Users fetched`);
+      return fetchedUsers;
+    })
+    .catch(error => {
+      databaseLogger.error(`Error fetching users - error: ${error}`);
+      throw error;
+    });
+}
+
 function create(user) {
   return User.create(user)
     .then(createdUser => {
@@ -59,6 +71,7 @@ function deleteById(userId) {
 }
 
 export default {
+  get,
   create,
   findByEmail,
   updateUserById,

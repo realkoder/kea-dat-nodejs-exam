@@ -3,6 +3,14 @@ import prefixedLogger from '../../../utils/logger.js';
 
 const serviceLogger = prefixedLogger('🔧 [Service]: ');
 
+function getUsers() {
+  serviceLogger.info('Gonna fetch Users');
+  const modifiedUsers = UserRepository.get().then(result =>
+    result.map(user => ({ name: user.name, email: user.email })),
+  );
+  return modifiedUsers;
+}
+
 function createNewuser(user) {
   serviceLogger.info('Creating new User');
   return UserRepository.create(user);
@@ -24,6 +32,7 @@ function deleteUserById(userId) {
 }
 
 export default {
+  getUsers,
   createNewuser,
   findUserByEmail,
   updateUserById,

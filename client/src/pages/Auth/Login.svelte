@@ -15,6 +15,7 @@
 
   import { BASE_URL } from '../../stores/generalStore.js';
   import genericApi from '../../utils/api/genericApi.js';
+  import userStore from '../../stores/userStore';
 
   let name = '';
   let email = '';
@@ -39,8 +40,11 @@
         })
         .then((response) => {
           console.log(response);
-          if (response.ok || response.message === 'Login successful') {
+          if (response.message === 'Login successfull') {
             toast.success('Login successful!');
+            userStore.update((user) => ({
+              ...response.user,
+            }));
             setTimeout(() => {
               navigate('/home');
             }, 1000);
@@ -93,7 +97,7 @@
     } catch (error) {
       validationErrors = error.formErrors.fieldErrors;
       console.error('Validation errors: ', validationErrors);
-      toast.error("Your credentials was not accepted.");
+      toast.error('Your credentials was not accepted.');
     }
   }
 
@@ -268,7 +272,7 @@
       </Tabs.Root>
     </div>
   </div>
-  <div class="hidden bg-muted lg:block">
+  <div class="bg-muted hidden lg:block">
     <img
       src={entryImage}
       alt="placeholder"

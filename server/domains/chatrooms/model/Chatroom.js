@@ -5,7 +5,10 @@ const chatroomSchema = new mongoose.Schema({
   chatroomName: String,
   chatroomUserCreatorId: String,
   color: String,
-  members: [String],
+  members: [{
+    name: String,
+    email: String
+  }],
   messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
 });
 

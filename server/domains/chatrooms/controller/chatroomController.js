@@ -9,6 +9,34 @@ const { Request, Response, NextFunction } = express;
  * @param { Response } res
  * @param { NextFunction } next
  */
+async function getChatrooms(req, res, next) {
+  try {
+    const fetchedChatrooms = await chatroomService.getChatrooms();
+    if (!fetchedChatrooms) return res.status(400).send({ message: 'Could not fetch Chatrooms' });
+
+    return res.status(200).send({
+      message: 'Successfully fetched Chatrooms',
+      chatroom: fetchedChatrooms,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getChatroomsByUserId(req, res, next) {
+  try {
+    const fetchedChatrooms = await chatroomService.getChatroomsById(req.params.id);
+    if (!fetchedChatrooms) return res.status(400).send({ message: 'Could not fetch Chatrooms by userId' });
+
+    return res.status(200).send({
+      message: 'Successfully fetched Chatrooms by userId',
+      chatrooms: fetchedChatrooms,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function createNewChatroom(req, res, next) {
   try {
     const newCreatedChatroom = await chatroomService.createNewChatroom(req.body);
@@ -55,6 +83,8 @@ async function deleteChatroomById(req, res, next) {
 }
 
 export default {
+  getChatrooms,
+  getChatroomsByUserId,
   createNewChatroom,
   findByIdPopulatedWithMessages,
   updateChatroomById,

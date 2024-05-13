@@ -4,6 +4,12 @@ import chatroomController from '../../domains/chatrooms/controller/chatroomContr
 const router = Router();
 
 // GET
+router.get("/", chatroomController.getChatrooms)
+
+// GET
+router.get("/:id", chatroomController.getChatroomsByUserId)
+
+// GET
 router.get('/:id', chatroomController.findByIdPopulatedWithMessages);
 
 // POST

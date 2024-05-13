@@ -54,7 +54,7 @@ const loginWithCredentials = async (req, res, next) => {
     });
 
     return res.status(200).send({
-      message: 'Login successful',
+      message: 'Login successfull',
       user: { id: userLogin.id, username: userLogin.username },
     });
   } catch (error) {
