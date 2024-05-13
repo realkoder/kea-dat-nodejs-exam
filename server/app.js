@@ -46,7 +46,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: ['http://localhost:8080', 'http://localhost:3000'],
+    origin: true,
     credentials: true,
   }),
 );
@@ -64,7 +64,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      domain: '192.168.1.101',
+      domain: 'localhost',
       secure: NODE_ENV === 'production', // should be true in production
       sameSite: 'lax',
       maxAge: 3600000, // 1 hour
@@ -77,35 +77,38 @@ app.use(httpLogger);
 app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
-app.use(express.static(path.resolve('../client/dist')));
-app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
+// SERVER SIDE RENDERING
+// app.use(express.static(path.resolve('../client/dist')));
+// app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
 
 // Instantiate the CustomRSocketServer with app
 const rSocketServer = new CustomRSocketServer({ app });
 rSocketServer.start();
 
-if (NODE_ENV === 'development') {
-  const bs = browserSync.create({ logLevel: 'silent' });
-  app.listen(PORT || 8080, () => {
-    serverLogger.info(`Express server listening on port: ${PORT || 8080}`);
-    bs.init({
-      proxy: `http://192.168.1.101:${PORT || 8080}`,
-      files: ['../client/**/*.*'],
-      ignore: '../client/node_modules/**/*.*',
-      port: 3000,
-      open: false,
-      notify: false,
-      https: false,
-      reloadOnRestart: true,
-      reloadDelay: 2000,
-    });
-    serverLogger.info(`Browser-sync proxying to port: ${PORT || 8080}`);
-  });
-} else {
-  app.listen(PORT || 8080, () => {
-    serverLogger.info(`Listening on port: ${PORT || 8080}`);
-  });
-}
+// if (NODE_ENV === 'development') {
+//   const bs = browserSync.create({ logLevel: 'silent' });
+//   app.listen(PORT || 8080, () => {
+//     serverLogger.info(`Express server listening on port: ${PORT || 8080}`);
+//     bs.init({
+//       proxy: `http://localhost:${PORT || 8080}`,
+//       files: ['../client/**/*.*'],
+//       ignore: '../client/node_modules/**/*.*',
+//       port: 3000,
+//       open: false,
+//       notify: false,
+//       https: false,
+//       reloadOnRestart: true,
+//       reloadDelay: 2000,
+//     });
+//     serverLogger.info(`Browser-sync proxying to port: ${PORT || 8080}`);
+//   });
+// } else {
+
+app.listen(PORT || 8080, () => {
+  serverLogger.info(`Listening on port: ${PORT || 8080}`);
+});
+
+// }
 
 (async () => {
   await redisConnection.connect();

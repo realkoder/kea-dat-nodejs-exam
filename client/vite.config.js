@@ -10,4 +10,9 @@ export default defineConfig({
       $lib: path.resolve('./src/lib'),
     },
   },
+  server: {
+    host: 'localhost',
+    port: 3000, // Specify the port for the server
+    open: true, // Open the browser when the server starts
+  },
 });
