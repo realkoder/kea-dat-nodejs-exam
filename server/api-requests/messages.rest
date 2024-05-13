@@ -1,0 +1,37 @@
+GET http://localhost:8080/api/v1/messages
+Content-Type: application/json
+Authorization: Bearer
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzAwNjAzMDczOTM3N2E5NDgyNmJmMyIsInVzZXJuYW1lIjoiam9uZG9lIiwiaWF0IjoxNzE0NDg0MDExLCJleHAiOjE3MTQ0ODQ5MTF9.e_zNd7zpfz6omqtfDgSPcNkLQNM-cS5A5Wpj3t0-ctI
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzAwNjAzMDczOTM3N2E5NDgyNmJmMyIsInVzZXJuYW1lIjoiam9uZG9lIiwiaWF0IjoxNzE0NDg0MDExLCJleHAiOjE3MTUwODg4MTF9.aLCyWPH059wASVSewf4sfNI_Q1M4SnGjAyB7kS7Io18
+
+###
+
+POST http://localhost:8080/api/v1/messages
+Content-Type: application/json
+Authorization: Bearer
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzAwNjAzMDczOTM3N2E5NDgyNmJmMyIsInVzZXJuYW1lIjoiam9uZG9lIiwiaWF0IjoxNzE0NDg0MDExLCJleHAiOjE3MTQ0ODQ5MTF9.e_zNd7zpfz6omqtfDgSPcNkLQNM-cS5A5Wpj3t0-ctI
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzAwNjAzMDczOTM3N2E5NDgyNmJmMyIsInVzZXJuYW1lIjoiam9uZG9lIiwiaWF0IjoxNzE0NDg0MDExLCJleHAiOjE3MTUwODg4MTF9.aLCyWPH059wASVSewf4sfNI_Q1M4SnGjAyB7kS7Io18
+
+{
+  "userId": "1",
+  "textMessage": "HEJ SÅ",
+  "chatroomId": {"_id": "66422d90e2bba4b2cb251aa0"}
+}
+
+###
+
+PUT http://localhost:8080/api/v1/messages/6642370b361e6b5e805173c8
+Content-Type: application/json
+Authorization: Bearer
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzAwNjAzMDczOTM3N2E5NDgyNmJmMyIsInVzZXJuYW1lIjoiam9uZG9lIiwiaWF0IjoxNzE0NDg0MDExLCJleHAiOjE3MTQ0ODQ5MTF9.e_zNd7zpfz6omqtfDgSPcNkLQNM-cS5A5Wpj3t0-ctI
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MzAwNjAzMDczOTM3N2E5NDgyNmJmMyIsInVzZXJuYW1lIjoiam9uZG9lIiwiaWF0IjoxNzE0NDg0MDExLCJleHAiOjE3MTUwODg4MTF9.aLCyWPH059wASVSewf4sfNI_Q1M4SnGjAyB7kS7Io18
+
+{
+    "userId": "1",
+    "textMessage": "NYT INDHOLD xD",
+    "chatroomId": {"_id": "66422d90e2bba4b2cb251aa0"}
+}
+
+###
+
+DELETE http://localhost:8080/api/v1/messages/6642367b72d93464f39dcaf9
