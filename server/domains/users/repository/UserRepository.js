@@ -42,10 +42,15 @@ function updateUserById(userId, user) {
 }
 
 function deleteById(userId) {
-  return User.findByIdAndDelete(userId)
-    .then(() => {
-      databaseLogger.info(`Deleted user with Id: ${userId}`);
-      return true;
+  return User.findByIdAndDelete({_id: userId})
+    .then((result) => {
+      if (result === null) {
+        databaseLogger.info(`No User with Id: ${userId}`);
+        return false;
+      } else {
+        databaseLogger.info(`Deleted user with Id: ${userId}`);
+        return true;
+      }
     })
     .catch(error => {
       databaseLogger.error(`Wasn't able to delete user with id: ${userId} - error: ${error}`);
