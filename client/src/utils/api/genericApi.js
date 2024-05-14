@@ -50,8 +50,27 @@ function PUT(url, { body, headers }) {
     .catch((error) => error);
 }
 
+function DELETE(url) {
+  return fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  })
+    .then((response) => {      
+      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+      return response;
+    })
+    .catch((error) => {
+      console.error('Fetch error:', error);
+      throw error;
+    });
+}
+
 export default {
   GET,
   POST,
   PUT,
+  DELETE
 };

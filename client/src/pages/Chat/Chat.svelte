@@ -1,9 +1,10 @@
 <script>
+  // COMPONENTS
   import HomeNavWthSidebar from '../../components/HomeNavWthSidebar/HomeNavWthSidebar.svelte';
   import Header from '../../components/Header/Header.svelte';
   import Chatbox from '../../components/Chatbox/Chatbox.svelte';
 
-  // UTILS
+  // SVELTE
   import { onDestroy, onMount } from 'svelte';
 
   // RSOCKET
@@ -11,49 +12,80 @@
 
   // UUID
   import { v4 as uuidv4 } from 'uuid';
+  import userStore from '../../stores/userStore';
+  import { navigate } from 'svelte-routing';
+  import { toast } from 'svelte-sonner';
 
+  export let chatroomId;
   let rsocket;
   let rsocketConnectionId = uuidv4();
   let chatMessages = [];
 
-  function sendMessage(textMessage) {
+  // INITIALIZING VIEW - SETTING RSOCKET AND CHECKING CHATROOMID
+  onMount(async () => {
+    // If client provide their own chatroomId not secure enough but something is done to check for this
+    if (!chatroomId || chatroomId.length < 20) {
+      const storedChatroomId = localStorage.getItem('latestChatroomId');
+      if (storedChatroomId) {
+        chatroomId = storedChatroomId;
+      } else {
+        toast.error('Something went wrong - BYE');
+        setTimeout(() => {
+          navigate('/home');
+        }, 4000);
+      }
+    }
+    console.log(chatroomId);
+    if (chatroomId) {
+      rsocket = await CustomRSocket.CreateAsync();
+      rsocket.requestStream(
+        `chatroom.stream.${$userStore.id}.${chatroomId}`,
+        { data: rsocketConnectionId },
+        chatMessages,
+        setChatMessages,
+      );
+
+      // CLEANUP IF RELOADING
+      window.addEventListener('beforeunload', function (event) {
+        if (rsocket) {
+          rsocket.fireAndForgetCloseConnection(
+            `close.${$userStore.id}.${chatroomId}`,
+            {
+              data: rsocketConnectionId,
+            },
+          );
+          rsocket.close();
+        }
+      });
+    }
+  });
+
+  // CLEANUP WHEN LEAVING PAGE
+  onDestroy(() => {
     if (rsocket) {
-      rsocket.fireAndForgetMessage('send.message.1.1', { data: textMessage });
+      rsocket.fireAndForgetCloseConnection(
+        `close.${$userStore.id}.${chatroomId}`,
+        {
+          data: rsocketConnectionId,
+        },
+      );
+      rsocket.close();
+    }
+  });
+
+  function sendMessage(textMessage) {
+    if (rsocket) {      
+      rsocket.fireAndForgetMessage(
+        `send.message.${$userStore.id}.${chatroomId}`,
+        { data: textMessage },
+      );
       textMessage = '';
     }
   }
 
   function setChatMessages(newChatMessages) {
     chatMessages = newChatMessages;
-  }
-
-  onMount(async () => {
-    rsocket = await CustomRSocket.CreateAsync();
-    rsocket.requestStream(
-      'chatroom.stream.1.1',
-      { data: rsocketConnectionId },
-      chatMessages,
-      setChatMessages,
-    );
-
-    window.addEventListener('beforeunload', function (event) {
-      if (rsocket) {
-        rsocket.fireAndForgetCloseConnection('close.1.1', {
-          data: rsocketConnectionId,
-        });
-        rsocket.close();
-      }
-    });
-  });
-
-  onDestroy(() => {
-    if (rsocket) {
-      rsocket.fireAndForgetCloseConnection('close.1.1', {
-        data: rsocketConnectionId,
-      });
-      rsocket.close();
-    }
-  });
+  }  
 </script>
 
 <div class="grid h-screen w-full pl-[53px]">

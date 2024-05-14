@@ -90,6 +90,7 @@ class CustomRSocketServer {
                     userConnection.connection.onNext({ data: payload.data });
                     console.log('Emitting message', messages);
                   });
+                  console.log(this.connectionsToChatroomsMap);
                 }
                 // Removing client who closes rsocket connection
               } else if (routingMetadata.substring(1).startsWith('close.')) {

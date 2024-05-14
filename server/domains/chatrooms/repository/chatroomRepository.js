@@ -16,7 +16,7 @@ function getChatrooms() {
 }
 
 function getChatroomsById(userId) {
-  return Chatroom.find({chatroomUserCreatorId: userId})
+  return Chatroom.find({ $or: [{ chatroomUserCreatorId: userId }, { 'members._id': userId }] })
     .then(fetchedChatrooms => {
       databaseLogger.info(`Chatrooms fetched by chatroomUserCreatorId`);
       return fetchedChatrooms;
@@ -44,7 +44,7 @@ function findByIdPopulatedWithMessages(chatroomId, page = 1, limit = 10) {
   const skip = (page - 1) * limit;
   return Chatroom.findById({ _id: chatroomId })
     .populate({
-      path: 'messages',      
+      path: 'messages',
       options: { skip: skip, limit: limit },
     })
     .then(foundChatroom => {

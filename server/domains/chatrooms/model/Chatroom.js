@@ -6,6 +6,7 @@ const chatroomSchema = new mongoose.Schema({
   chatroomUserCreatorId: String,
   color: String,
   members: [{
+    id: String,
     name: String,
     email: String
   }],

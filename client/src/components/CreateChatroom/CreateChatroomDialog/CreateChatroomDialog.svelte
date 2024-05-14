@@ -44,12 +44,12 @@
           console.log(response);
           if (response.message === 'Successfully created new chatroom') {
             toast.success('New chatroom created!');
-            // localStorage.setItem('latestChatroomId', response);
+            localStorage.setItem('latestChatroomId', response.chatroom._id);
             setTimeout(() => {
-              navigate('/chat');
+              navigate(`/chat/${response.chatroom._id}`);
             }, 1000);
           } else {
-            toast(
+            toast.error(
               'Creating new chatroom failed, please check your credentials and try again.',
             );
           }

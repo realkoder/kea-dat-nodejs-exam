@@ -6,7 +6,7 @@ const serviceLogger = prefixedLogger('🔧 [Service]: ');
 function getUsers() {
   serviceLogger.info('Gonna fetch Users');
   const modifiedUsers = UserRepository.get().then(result =>
-    result.map(user => ({ name: user.name, email: user.email })),
+    result.map(user => ({ id: user.id, name: user.name, email: user.email })),
   );
   return modifiedUsers;
 }

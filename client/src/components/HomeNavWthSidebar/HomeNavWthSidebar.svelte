@@ -9,11 +9,17 @@
   import Book from 'lucide-svelte/icons/book';
   import LifeBuoy from 'lucide-svelte/icons/life-buoy';
   import SquareUser from 'lucide-svelte/icons/square-user';
+  import { navigate } from 'svelte-routing';
 </script>
 
 <aside class="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
   <div class="border-b p-2">
-    <Button variant="outline" size="icon" aria-label="Home">
+    <Button
+      variant="outline"
+      size="icon"
+      aria-label="Home"
+      on:click={() => navigate('/home')}
+    >
       <img src={IntelliOptimaLogo} alt="Logo" class="h-5 w-5 object-cover" />
     </Button>
   </div>

@@ -56,7 +56,7 @@
     <section>
       <Route path="/" component={Login} />
       <Route path="/home" component={Home} />
-      <Route path="/chat" component={Chat} />
+      <Route path="/chat/:chatroomId" component={Chat} />
       <Route path="/reset-password" component={ResetPassword} />
     </section>
   </main>
