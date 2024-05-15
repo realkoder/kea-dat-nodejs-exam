@@ -47,8 +47,7 @@ function findByIdPopulatedWithMessages(chatroomId, limit = 10) {
       options: { sort: { createdAt: -1 }, limit: limit },
     })
     .then(foundChatroom => {
-      databaseLogger.info(`Chatroom found with id: ${chatroomId}`);
-      databaseLogger.info(`Chatroom looks like: ${foundChatroom}`);
+      databaseLogger.info(`Chatroom found with id: ${chatroomId}`);      
       return foundChatroom;
     })
     .catch(error => {

@@ -21,8 +21,7 @@
     genericApi
       .GET(`${$BASE_URL}/api/v1/messages/${chatroom._id}?page=${page}&limit=10`)
       .then((response) => response.json())
-      .then((fetchedData) => {
-        console.log(fetchedData);
+      .then((fetchedData) => {        
         appendOlderMessages(fetchedData.messages);
         page = page + 1;
       })

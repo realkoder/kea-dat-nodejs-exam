@@ -42,15 +42,13 @@ function get() {
 }
 
 function getMessagesByChatroomId(chatroomId, page = 1, limit = 10) {
-  const skip = (page - 1) * limit;
-  console.log('NU', chatroomId);
+  const skip = (page - 1) * limit;  
   return Message.find({ chatroomId: chatroomId })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
     .then(fetchedMessages => {
-      databaseLogger.info(`Messages fetched by chatroomId`);
-      console.log('LOOK', fetchedMessages);
+      databaseLogger.info(`Messages fetched by chatroomId`);      
       return fetchedMessages;
     })
     .catch(error => {
