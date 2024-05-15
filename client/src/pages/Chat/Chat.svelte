@@ -3,20 +3,25 @@
   import HomeNavWthSidebar from '../../components/HomeNavWthSidebar/HomeNavWthSidebar.svelte';
   import Header from '../../components/Header/Header.svelte';
   import Chatbox from '../../components/Chatbox/Chatbox.svelte';
+  import { toast } from 'svelte-sonner';
 
-  // SVELTE
+  // UTIL / SVELTE
   import { onDestroy, onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
+  import genericApi from '../../utils/api/genericApi.js';
 
   // RSOCKET
-  import { CustomRSocket } from '../../modules/RSocketClient';
+  import { CustomRSocket } from '../../modules/RSocketClient.js';
+
+  // STORE
+  import userStore from '../../stores/userStore.js';
+  import { BASE_URL } from '../../stores/generalStore.js';
 
   // UUID
   import { v4 as uuidv4 } from 'uuid';
-  import userStore from '../../stores/userStore';
-  import { navigate } from 'svelte-routing';
-  import { toast } from 'svelte-sonner';
 
   export let chatroomId;
+  let chatroom;
   let rsocket;
   let rsocketConnectionId = uuidv4();
   let chatMessages = [];
@@ -35,13 +40,13 @@
         }, 4000);
       }
     }
-    console.log(chatroomId);
+
     if (chatroomId) {
+      fetchChatroom();
       rsocket = await CustomRSocket.CreateAsync();
       rsocket.requestStream(
         `chatroom.stream.${$userStore.id}.${chatroomId}`,
-        { data: rsocketConnectionId },
-        chatMessages,
+        { data: rsocketConnectionId },        
         setChatMessages,
       );
 
@@ -73,19 +78,39 @@
     }
   });
 
+  function fetchChatroom() {
+    genericApi
+      .GET(`${$BASE_URL}/api/v1/chatrooms/${chatroomId}`)
+      .then((response) => response.json())
+      .then((fetchedData) => {
+        chatroom = fetchedData.data;
+        chatMessages = chatroom.messages;
+      })
+      .catch((error) => console.error(error));
+  }
+
   function sendMessage(textMessage) {
-    if (rsocket) {      
+    if (rsocket) {
       rsocket.fireAndForgetMessage(
         `send.message.${$userStore.id}.${chatroomId}`,
-        { data: textMessage },
+        {
+          data: {
+            userId: $userStore.id,
+            textMessage: textMessage,
+            chatroomId: chatroomId,
+          },
+        },
       );
-      textMessage = '';
     }
   }
 
-  function setChatMessages(newChatMessages) {
-    chatMessages = newChatMessages;
-  }  
+  function setChatMessages(chatMessage) {
+    chatMessages = [...chatMessages, chatMessage];
+  }
+
+  function appendOlderMessages(olderChatMessages) {
+    chatMessages = [...olderChatMessages, ...chatMessages]
+  }
 </script>
 
 <div class="grid h-screen w-full pl-[53px]">
@@ -95,7 +120,11 @@
     <main
       class="mx-auto grid w-full flex-1 gap-4 overflow-auto p-4 md:lg:col-span-full lg:lg:col-span-full lg:w-10/12"
     >
-      <Chatbox {sendMessage} {chatMessages} />
+      {#if chatroom}
+        <h1 class="">{chatroom.chatroomName}</h1>
+      {/if}
+
+      <Chatbox {sendMessage} {chatMessages} {chatroom} {appendOlderMessages}/>
     </main>
   </div>
 </div>

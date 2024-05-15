@@ -9,16 +9,19 @@ function create(message) {
     .then(createdMessage => {
       databaseLogger.info(`Message created with id: ${createdMessage.id}`);
       // Update the corresponding chatroom's messages array
-      return Chatroom.findByIdAndUpdate(message.chatroomId, { $push: { messages: createdMessage._id } }, { new: true })
-        .then(updatedChatroom => {
-          if (!updatedChatroom) {
-            databaseLogger.info(`Chatroom was not able to be updated with new message.`);
-            return createdMessage.id;
-          } else {
-            databaseLogger.info(`Chatroom ${updatedChatroom.chatroomName} updated with new message.`);
-            return createdMessage.id;
-          }          
-        });
+      return Chatroom.findByIdAndUpdate(
+        message.chatroomId,
+        { $push: { messages: createdMessage._id } },
+        { new: true },
+      ).then(updatedChatroom => {
+        if (!updatedChatroom) {
+          databaseLogger.info(`Chatroom was not able to be updated with new message.`);
+          return createdMessage.id;
+        } else {
+          databaseLogger.info(`Chatroom ${updatedChatroom.chatroomName} updated with new message.`);
+          return createdMessage.id;
+        }
+      });
     })
     .catch(error => {
       databaseLogger.error(`Error creating message: ${message} - error: ${error}`);
@@ -38,6 +41,23 @@ function get() {
     });
 }
 
+function getMessagesByChatroomId(chatroomId, page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+  console.log('NU', chatroomId);
+  return Message.find({ chatroomId: chatroomId })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .then(fetchedMessages => {
+      databaseLogger.info(`Messages fetched by chatroomId`);
+      console.log('LOOK', fetchedMessages);
+      return fetchedMessages;
+    })
+    .catch(error => {
+      databaseLogger.error(`Error fetching messages - error: ${error}`);
+      throw error;
+    });
+}
 function updateMessageById(messageId, message) {
   const filter = { _id: messageId };
   const { id, _id, ...updatedFields } = { ...message };
@@ -52,8 +72,8 @@ function updateMessageById(messageId, message) {
 }
 
 function deleteById(messageId) {
-  return Message.findByIdAndDelete({_id: messageId})
-    .then((result) => {
+  return Message.findByIdAndDelete({ _id: messageId })
+    .then(result => {
       if (result === null) {
         databaseLogger.info(`No message with Id: ${messageId}`);
         return false;
@@ -71,6 +91,7 @@ function deleteById(messageId) {
 export default {
   create,
   get,
+  getMessagesByChatroomId,
   updateMessageById,
   deleteById,
 };

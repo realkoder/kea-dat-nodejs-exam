@@ -6,9 +6,10 @@
   import Button from '$lib/components/ui/button/button.svelte';
   import { toast } from 'svelte-sonner';
 
-  // UTIL
+  // UTIL / SVELTE
   import genericApi from '../../utils/api/genericApi.js';
   import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
 
   // STORE
   import { BASE_URL } from '../../stores/generalStore.js';
@@ -17,12 +18,13 @@
   // TIME
   import dayjs from 'dayjs';
   import relativeTime from 'dayjs/plugin/relativeTime';
+  import AlertDialog from '../AlertDialog/AlertDialog.svelte';
 
   let chatrooms = [];
 
   onMount(() => {
     genericApi
-      .GET(`${$BASE_URL}/api/v1/chatrooms/${$userStore.id}`)
+      .GET(`${$BASE_URL}/api/v1/chatrooms/userId/${$userStore.id}`)
       .then((response) => response.json())
       .then((fetchedData) => {
         chatrooms = fetchedData.chatrooms.sort(
@@ -74,18 +76,30 @@
     <Table.Body>
       {#each chatrooms as chatroom, i (i)}
         <Table.Row>
-          <Table.Cell class="font-medium">{chatroom.chatroomName}</Table.Cell>
-          <Table.Cell class="text-center"
+          <Table.Cell
+            class={'cursor-pointer font-medium'}
+            on:click={() => navigate(`/chat/${chatroom._id}`)}
+            >{chatroom.chatroomName}</Table.Cell
+          >
+          <Table.Cell
+            class={'cursor-pointer text-center font-medium'}
+            on:click={() => navigate(`/chat/${chatroom._id}`)}
             >{getMoment(chatroom.createdAt)}</Table.Cell
           >
-          <Table.Cell class="text-center">{chatroom.members.length}</Table.Cell>
-          <Table.Cell class="text-center">{i + 1}</Table.Cell>
+          <Table.Cell
+            class={'cursor-pointer text-center font-medium'}
+            on:click={() => navigate(`/chat/${chatroom._id}`)}
+            >{chatroom.members.length + 1}</Table.Cell
+          >
+          <Table.Cell
+            class={'cursor-pointer text-center font-medium'}
+            on:click={() => navigate(`/chat/${chatroom._id}`)}
+            >{i + 1}</Table.Cell
+          >
           <Table.Cell class="items-center text-center">
-            <Button
-              variant="destructive"
-              on:click={() => handleDeleteChatroom(chatroom._id)}
-              >Remove member</Button
-            >
+            <AlertDialog
+              handleAccept={() => handleDeleteChatroom(chatroom._id)}
+            />
           </Table.Cell>
         </Table.Row>
       {/each}

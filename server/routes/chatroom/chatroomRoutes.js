@@ -7,10 +7,10 @@ const router = Router();
 router.get("/", chatroomController.getChatrooms)
 
 // GET
-router.get("/:id", chatroomController.getChatroomsByUserId)
+router.get('/:id', chatroomController.findByIdPopulatedWithMessages);
 
 // GET
-router.get('/:id', chatroomController.findByIdPopulatedWithMessages);
+router.get("/userId/:id", chatroomController.getChatroomsByUserId)
 
 // POST
 router.post('/', chatroomController.createNewChatroom);

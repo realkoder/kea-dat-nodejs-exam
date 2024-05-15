@@ -13,6 +13,11 @@ function getMessages() {
   return messageRepository.get();
 }
 
+function getMessagesByChatroomId(chatroomId, page = 1, limit = 10) {
+  serviceLogger.info('Gonna fetch messages by chatroomId');
+  return messageRepository.getMessagesByChatroomId(chatroomId, page, limit);
+}
+
 function updateMessageById(messageId, message) {
   serviceLogger.info(`Updating message with id: ${messageId}`);
   return messageRepository.updateMessageById(messageId, message);
@@ -26,6 +31,7 @@ function deleteMessageById(messageId) {
 export default {
   createNewMessage,
   getMessages,
+  getMessagesByChatroomId,
   updateMessageById,
   deleteMessageById,
 };

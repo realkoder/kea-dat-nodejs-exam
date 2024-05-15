@@ -6,6 +6,9 @@ const router = Router();
 // GET
 router.get('/', messageController.getMessages);
 
+// GET
+router.get('/:chatroomId', messageController.getMessagesByChatroomId)
+
 // POST
 router.post('/', messageController.createNewMessage);
 

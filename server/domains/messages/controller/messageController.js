@@ -36,6 +36,21 @@ async function getMessages(req, res, next) {
   }
 }
 
+async function getMessagesByChatroomId(req, res, next) {
+  try {
+    const page = req.query.page ? req.query.page : 1;
+    const limit = req.query.limit ? req.query.limit : 10;
+    const messages = await messageService.getMessagesByChatroomId(req.params.chatroomId, page, limit);
+    
+    return res.status(200).send({
+      info: 'Successfully fetched messages by chatroomId',
+      messages: messages,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function updateMessageById(req, res, next) {
   try {
     const updatedMessage = await messageService.updateMessageById(req.params.id, req.body);
@@ -60,6 +75,7 @@ async function deleteMessageById(req, res, next) {
 export default {
   createNewMessage,
   getMessages,
+  getMessagesByChatroomId,
   updateMessageById,
   deleteMessageById,
 };

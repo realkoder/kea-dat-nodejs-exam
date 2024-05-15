@@ -1,25 +1,47 @@
 <script>
   import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
-  import { Badge } from '$lib/components/ui/badge/index.js';
   import { Textarea } from '$lib/components/ui/textarea/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
   import { Button } from '$lib/components/ui/button/index.js';
+  import MessageScrollArea from './MessageScrollArea/MessageScrollArea.svelte';
+  import genericApi from '../../utils/api/genericApi';
+  import { BASE_URL } from '../../stores/generalStore';
 
   export let sendMessage;
   export let chatMessages;
+  export let chatroom;
+  export let appendOlderMessages;
   let textMessage;
+  let page = 2;
+
+  function fetchMoreMessages() {
+    console.log(
+      `${$BASE_URL}/api/v1/messages/${chatroom._id}?page=${page}&limit=10`,
+    );
+    genericApi
+      .GET(`${$BASE_URL}/api/v1/messages/${chatroom._id}?page=${page}&limit=10`)
+      .then((response) => response.json())
+      .then((fetchedData) => {
+        console.log(fetchedData);
+        appendOlderMessages(fetchedData.messages);
+        page = page + 1;
+      })
+      .catch((error) => console.error(error));
+  }
 </script>
 
 <div
   class="bg-muted/50 relative flex h-full min-h-[50vh] flex-col rounded-xl p-4 lg:col-span-2"
 >
-  <Badge variant="outline" class="absolute right-3 top-3">Output</Badge>
   <div class="flex-1">
-    {#each chatMessages as message}
-      <div class="my-2 rounded-lg bg-white p-2 shadow">
-        {message.data}
-      </div>
-    {/each}
+    <Button on:click={fetchMoreMessages}>FETCH MORE MESSAGE</Button>
+    <MessageScrollArea
+      chatMessages={chatMessages.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      )}
+      {chatroom}
+    />
   </div>
   <form
     class="bg-background focus-within:ring-ring relative overflow-hidden rounded-lg border focus-within:ring-1"

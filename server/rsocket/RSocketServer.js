@@ -4,6 +4,7 @@ import { WebsocketServerTransport } from 'rsocket-websocket-server';
 import { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import prefixedLogger from '../utils/logger.js';
+import messageService from '../domains/messages/service/messageService.js';
 
 const rsocketLogger = prefixedLogger('⚡ [RSocketServer]: ');
 
@@ -45,7 +46,7 @@ class CustomRSocketServer {
       acceptor: {
         accept: async (payload, remotePeer) => {
           return {
-            fireAndForget: payload => {
+            fireAndForget: async payload => {
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
                 return {
@@ -76,22 +77,26 @@ class CustomRSocketServer {
 
               rsocketLogger.info(`Routing metadata: ${routingMetadata}`);
 
+              // ENDPOINT send.message.:userId:chatroomId
               if (routingMetadata.substring(1).startsWith('send.message.')) {
                 const data = routingMetadata.split('.');
                 const userId = data[2];
                 const chatroomId = data[3];
 
                 if (payload.data) {
-                  const messages = JSON.parse(payload.data.toString());
+                  const message = JSON.parse(payload.data.toString());
 
-                  rsocketLogger.info(`FireAndForget received: ${messages}`);
+                  rsocketLogger.info(`FireAndForget received: ${message}`);                  
+
+                  // TODO STORE MESSAGE IN MONGODB
+                  await messageService.createNewMessage(message.data);
 
                   this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
                     userConnection.connection.onNext({ data: payload.data });
-                    console.log('Emitting message', messages);
+                    console.log('Emitting message', message);
                   });
-                  console.log(this.connectionsToChatroomsMap);
                 }
+
                 // Removing client who closes rsocket connection
               } else if (routingMetadata.substring(1).startsWith('close.')) {
                 const data = routingMetadata.split('.');
@@ -238,13 +243,13 @@ class CustomRSocketServer {
       .push({ rsocketConnectionId: rsocketConnectionId, connection: connection });
   }
 
-  removeUserFromChatroom(chatroomId, rsocketConnectionId) {    
+  removeUserFromChatroom(chatroomId, rsocketConnectionId) {
     if (this.connectionsToChatroomsMap.has(chatroomId)) {
       this.connectionsToChatroomsMap.set(
         chatroomId,
         this.connectionsToChatroomsMap.get(chatroomId).filter(user => user.rsocketConnectionId != rsocketConnectionId),
       );
-      rsocketLogger.info('Deleted user from connectionsToChatroomsMap');      
+      rsocketLogger.info('Deleted user from connectionsToChatroomsMap');
       if (this.connectionsToChatroomsMap.get(chatroomId).size === 0) {
         this.connectionsToChatroomsMap.delete(chatroomId);
         rsocketLogger.info('Deleted connection map from connectionsToChatroomsMap');
