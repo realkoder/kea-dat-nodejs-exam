@@ -46,7 +46,7 @@
       rsocket = await CustomRSocket.CreateAsync();
       rsocket.requestStream(
         `chatroom.stream.${$userStore.id}.${chatroomId}`,
-        { data: rsocketConnectionId },        
+        { data: rsocketConnectionId },
         setChatMessages,
       );
 
@@ -90,6 +90,10 @@
   }
 
   function sendMessage(textMessage) {
+    if (textMessage === '') {
+      toast.error('Not possible to send empty message');
+      return;
+    }
     if (rsocket) {
       rsocket.fireAndForgetMessage(
         `send.message.${$userStore.id}.${chatroomId}`,
@@ -109,7 +113,14 @@
   }
 
   function appendOlderMessages(olderChatMessages) {
-    chatMessages = [...olderChatMessages, ...chatMessages]
+    const combinedMessages = [...olderChatMessages, ...chatMessages];
+    const uniqueMessagesSet = new Set(
+      combinedMessages.map((message) => message._id),
+    );
+
+    chatMessages = Array.from(uniqueMessagesSet).map((id) =>
+      combinedMessages.find((message) => message._id === id),
+    );
   }
 </script>
 
@@ -124,7 +135,7 @@
         <h1 class="">{chatroom.chatroomName}</h1>
       {/if}
 
-      <Chatbox {sendMessage} {chatMessages} {chatroom} {appendOlderMessages}/>
+      <Chatbox {sendMessage} {chatMessages} {chatroom} {appendOlderMessages} />
     </main>
   </div>
 </div>
