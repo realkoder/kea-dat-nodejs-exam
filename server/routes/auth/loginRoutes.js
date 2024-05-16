@@ -15,7 +15,8 @@ router.get('/logout', authenticateToken, LoginController.logout);
 // POST
 router.post('/', LoginController.createNewUserWithLogin);
 
-router.post('/login', sensitiveLimiter, LoginController.loginWithCredentials);
+// router.post('/login', sensitiveLimiter, LoginController.loginWithCredentials);
+router.post('/login', LoginController.loginWithCredentials);
 
 router.post('/forgot-password', sensitiveLimiter, LoginController.sendEmailForPasswordReset);
 

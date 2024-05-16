@@ -5,7 +5,7 @@
 
   export let chatMessages;
   export let chatroom;
-  let chatWindowRef; 
+  let chatWindowRef;
   let wasAtBottom = false;
 
   function scrollToBottom() {
@@ -14,20 +14,19 @@
   }
 
   function isAtBottom() {
-
-    // scrollTop: hvor meget jeg har scrollet ned
-    // clientHeight: kunne også hedde containerHeight / scrollAreaHeight
-    // scrollHeight: højden på alt content inden i (alle chatbeskederne)
+    // scrollTop: how much client have scrolled down
+    // clientHeight: could also be named containerHeight
+    // scrollHeight: height of all content inside container
 
     const { scrollTop, clientHeight, scrollHeight } = chatWindowRef;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 30;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 80;
     return isAtBottom;
   }
 
   afterUpdate(() => {
-    if (!chatWindowRef) return;    
+    if (!chatWindowRef) return;
 
-    if (wasAtBottom) {      
+    if (wasAtBottom) {
       scrollToBottom();
     }
   });

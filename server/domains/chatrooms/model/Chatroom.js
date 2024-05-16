@@ -5,11 +5,13 @@ const chatroomSchema = new mongoose.Schema({
   chatroomName: String,
   chatroomUserCreatorId: String,
   color: String,
-  members: [{
-    id: String,
-    name: String,
-    email: String
-  }],
+  members: [
+    {
+      id: String,
+      name: String,
+      email: String,
+    },
+  ],
   messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
 });
 

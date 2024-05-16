@@ -27,14 +27,27 @@
       .GET(`${$BASE_URL}/api/v1/chatrooms/userId/${$userStore.id}`)
       .then((response) => response.json())
       .then((fetchedData) => {
-        chatrooms = fetchedData.chatrooms.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-        console.log(chatrooms);
+        chatrooms = sortChatroomByLatestMessageOrCreatedData(fetchedData);
       })
       .catch((error) => console.error(error));
   });
+
+  function sortChatroomByLatestMessageOrCreatedData(data) {
+    return data.chatrooms.sort((a, b) => {
+      const getDate = (chatroom) => {
+        if (chatroom.messages.length > 0) {
+          return new Date(
+            chatroom.messages[chatroom.messages.length - 1].createdAt,
+          );
+        } else {
+          return new Date(chatroom.createdAt);
+        }
+      };
+      const dateA = getDate(a);
+      const dateB = getDate(b);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
 
   function handleDeleteChatroom(chatroomId) {
     genericApi
@@ -55,8 +68,7 @@
     dayjs.extend(relativeTime);
 
     const timeAgo = dayjs(date).fromNow();
-
-    console.log(timeAgo);
+    
     return timeAgo;
   }
 </script>
@@ -68,6 +80,7 @@
       <Table.Row>
         <Table.Head class="w-[100px]">Name</Table.Head>
         <Table.Head class="text-center">Created</Table.Head>
+        <Table.Head class="text-center">Latest message</Table.Head>
         <Table.Head class="text-center">Amount of members</Table.Head>
         <Table.Head class="text-center">No.</Table.Head>
         <Table.Head class="text-center">Action</Table.Head>
@@ -85,6 +98,15 @@
             class={'cursor-pointer text-center font-medium'}
             on:click={() => navigate(`/chat/${chatroom._id}`)}
             >{getMoment(chatroom.createdAt)}</Table.Cell
+          >
+          <Table.Cell
+            class={'cursor-pointer text-center font-medium'}
+            on:click={() => navigate(`/chat/${chatroom._id}`)}
+            >{chatroom.messages.length > 0
+              ? getMoment(
+                  chatroom.messages[chatroom.messages.length - 1].createdAt,
+                )
+              : 'No messages'}</Table.Cell
           >
           <Table.Cell
             class={'cursor-pointer text-center font-medium'}

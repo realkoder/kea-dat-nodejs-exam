@@ -11,7 +11,7 @@ function create(message) {
       // Update the corresponding chatroom's messages array
       return Chatroom.findByIdAndUpdate(
         message.chatroomId,
-        { $push: { messages: createdMessage._id } },
+        { $push: { messages: createdMessage.toObject() } },
         { new: true },
       ).then(updatedChatroom => {
         if (!updatedChatroom) {

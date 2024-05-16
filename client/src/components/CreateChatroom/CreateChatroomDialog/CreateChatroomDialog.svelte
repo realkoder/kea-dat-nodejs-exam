@@ -23,7 +23,7 @@
       .GET(`${$BASE_URL}/api/v1/users`)
       .then((response) => response.json())
       .then((fetchedData) => {
-        users = fetchedData.data;
+        users = fetchedData.data.filter((user) => user.id !== $userStore.id);
       });
   });
 
@@ -40,8 +40,7 @@
           body: newChatroom,
           headers: '',
         })
-        .then((response) => {
-          console.log(response);
+        .then((response) => {          
           if (response.message === 'Successfully created new chatroom') {
             toast.success('New chatroom created!');
             localStorage.setItem('latestChatroomId', response.chatroom._id);
@@ -65,8 +64,7 @@
 
   function handleChatroomMembersChange(member) {
     chatroomMembers = [...chatroomMembers, member];
-    users = users.filter((cur) => cur.email !== member.email);
-    console.log(users);
+    users = users.filter((cur) => cur.email !== member.email);    
   }
 
   function handleRemoveMember(member) {
