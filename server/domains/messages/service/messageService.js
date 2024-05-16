@@ -14,7 +14,7 @@ function getMessages() {
 }
 
 function getMessagesByChatroomId(chatroomId, page = 1, limit = 10) {
-  serviceLogger.info('Gonna fetch messages by chatroomId');
+  serviceLogger.info('Fetching messages by chatroomId');
   return messageRepository.getMessagesByChatroomId(chatroomId, page, limit);
 }
 
@@ -24,7 +24,7 @@ function updateMessageById(messageId, message) {
 }
 
 function deleteMessageById(messageId) {
-  serviceLogger.info(`Gonna delete message with id: ${messageId}`);
+  serviceLogger.info(`Deleting message with id: ${messageId}`);
   return messageRepository.deleteById(messageId);
 }
 

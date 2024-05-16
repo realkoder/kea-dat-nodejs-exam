@@ -3,7 +3,6 @@
   import * as Table from '$lib/components/ui/table/index.js';
 
   // SHADCN
-  import Button from '$lib/components/ui/button/button.svelte';
   import { toast } from 'svelte-sonner';
 
   // UTIL / SVELTE
@@ -68,7 +67,7 @@
     dayjs.extend(relativeTime);
 
     const timeAgo = dayjs(date).fromNow();
-    
+
     return timeAgo;
   }
 </script>
@@ -89,9 +88,7 @@
     <Table.Body>
       {#each chatrooms as chatroom, i (i)}
         <Table.Row>
-          <Table.Cell
-            class={'cursor-pointer font-medium'}
-            on:click={() => navigate(`/chat/${chatroom._id}`)}
+          <Table.Cell class={'cursor-pointer font-medium'}
             >{chatroom.chatroomName}</Table.Cell
           >
           <Table.Cell

@@ -7,7 +7,9 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button builders={[builder]} variant="destructive">Delete chatroom</Button>
+    <Button builders={[builder]} variant="destructive"
+      >Delete chatroom</Button
+    >
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     <AlertDialog.Header>

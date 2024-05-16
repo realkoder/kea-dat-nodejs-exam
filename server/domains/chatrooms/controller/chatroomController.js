@@ -23,6 +23,12 @@ async function getChatrooms(req, res, next) {
   }
 }
 
+/**
+ *
+ * @param { Request } req
+ * @param { Response } res
+ * @param { NextFunction } next
+ */
 async function getChatroomsByUserId(req, res, next) {
   try {
     const fetchedChatrooms = await chatroomService.getChatroomsById(req.params.id);
@@ -37,6 +43,12 @@ async function getChatroomsByUserId(req, res, next) {
   }
 }
 
+/**
+ *
+ * @param { Request } req
+ * @param { Response } res
+ * @param { NextFunction } next
+ */
 async function createNewChatroom(req, res, next) {
   try {
     const newCreatedChatroom = await chatroomService.createNewChatroom(req.body);
@@ -51,6 +63,12 @@ async function createNewChatroom(req, res, next) {
   }
 }
 
+/**
+ *
+ * @param { Request } req
+ * @param { Response } res
+ * @param { NextFunction } next
+ */
 async function findByIdPopulatedWithMessages(req, res, next) {
   try {
     const foundChatroom = await chatroomService.findByIdPopulatedWithMessages(req.params.id);
@@ -61,6 +79,12 @@ async function findByIdPopulatedWithMessages(req, res, next) {
   }
 }
 
+/**
+ *
+ * @param { Request } req
+ * @param { Response } res
+ * @param { NextFunction } next
+ */
 async function updateChatroomById(req, res, next) {
   try {
     const updatedChatroom = await chatroomService.updateChatroomById(req.params.id, req.body);
@@ -69,6 +93,12 @@ async function updateChatroomById(req, res, next) {
   } catch (error) {}
 }
 
+/**
+ *
+ * @param { Request } req
+ * @param { Response } res
+ * @param { NextFunction } next
+ */
 async function deleteChatroomById(req, res, next) {
   try {
     const deletionResult = await chatroomService.deleteChatroomById(req.params.id);

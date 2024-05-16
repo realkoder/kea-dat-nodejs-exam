@@ -16,7 +16,7 @@ function getChatrooms() {
 }
 
 function getChatroomsById(userId, limit = 1) {
-  return Chatroom.find({ $or: [{ chatroomUserCreatorId: userId }, { 'members.id': userId }] })
+  return Chatroom.find({ $or: [{ chatroomUserCreatorId: userId }, { 'members._id': userId }] })
     .populate({
       path: 'messages',
       options: { sort: { createdAt: -1 }, limit: limit },

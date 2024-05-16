@@ -4,7 +4,7 @@ import prefixedLogger from '../../../utils/logger.js';
 const serviceLogger = prefixedLogger('🔧 [Service]: ');
 
 function getUsers() {
-  serviceLogger.info('Gonna fetch Users');
+  serviceLogger.info('Fetching Users');
   const modifiedUsers = UserRepository.get().then(result =>
     result.map(user => ({ id: user.id, name: user.name, email: user.email })),
   );
