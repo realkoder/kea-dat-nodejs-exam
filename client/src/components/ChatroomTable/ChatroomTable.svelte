@@ -4,6 +4,7 @@
 
   // SHADCN
   import { toast } from 'svelte-sonner';
+  import AlertDialog from '../AlertDialog/AlertDialog.svelte';
 
   // UTIL / SVELTE
   import genericApi from '../../utils/api/genericApi.js';
@@ -17,7 +18,6 @@
   // TIME
   import dayjs from 'dayjs';
   import relativeTime from 'dayjs/plugin/relativeTime';
-  import AlertDialog from '../AlertDialog/AlertDialog.svelte';
 
   let chatrooms = [];
 
@@ -66,7 +66,7 @@
   function getMoment(date) {
     dayjs.extend(relativeTime);
 
-    const timeAgo = dayjs(date).fromNow();
+    const timeAgo = dayjs(date).fromNow();    
 
     return timeAgo;
   }
