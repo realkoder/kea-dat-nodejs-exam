@@ -12,16 +12,15 @@ const MESSAGE_RSOCKET_ROUTING = WellKnownMimeType.MESSAGE_RSOCKET_ROUTING;
 
 class CustomRSocketServer {
   constructor() {
-    //this.chatroomSinks = new Map();
     this.connectionsToChatroomsMap = new Map(); // Key: chatroomId / value: set<{userId, connection}>
-    this.chunkStream = new Map();
+    this.chunkStream = new Map(); // Currently not used, but for future used to split messages up into chunks
     this.initializeServer();
   }
 
   initializeServer() {
     this.server = new RSocketServer({
       transport: new WebsocketServerTransport({
-        wsCreator: options => {
+        wsCreator: () => {
           return new WebSocketServer({
             port: process.env.RSOCKET_PORT || 8085,
           });
@@ -32,9 +31,7 @@ class CustomRSocketServer {
       },
       resume: {
         cacheSize: 65536, // Size of the cache for resuming, can be adjusted
-        tokenGenerator: () => {
-          return Buffer.from(uuidv4().toString());
-        },
+        tokenGenerator: () => Buffer.from(uuidv4().toString()),
         reconnectFunction: attempt => {
           let delay = Math.pow(2, attempt) * 1000; // Exponential backoff starting from 1 second
           delay = Math.min(delay, 60000); // Cap the delay to 1 minute (60000 milliseconds)
@@ -46,33 +43,18 @@ class CustomRSocketServer {
       acceptor: {
         accept: async (payload, remotePeer) => {
           return {
-            fireAndForget: async payload => {
+            fireAndForget: async payload => {              
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
-                return {
-                  cancel: () => {},
-                  request: _n => {},
-                  onExtension: () => {},
-                };
+                this.createEmptyResponse();
               }
 
               const compositeMetadata = new CompositeMetadata(payload.metadata);
-
-              let routingMetadata;
-              for (const entry of compositeMetadata) {
-                if (entry.mimeType && entry.mimeType === MESSAGE_RSOCKET_ROUTING.toString()) {
-                  routingMetadata = entry.content.toString();
-                  break;
-                }
-              }
+              const routingMetadata = this.getRoutingMetadata(compositeMetadata);
 
               if (!routingMetadata) {
                 rsocketLogger.error('Routing metadata not found');
-                return {
-                  cancel: () => {},
-                  request: _n => {},
-                  onExtension: () => {},
-                };
+                return this.createEmptyResponse();
               }
 
               rsocketLogger.info(`Routing metadata: ${routingMetadata}`);
@@ -80,91 +62,40 @@ class CustomRSocketServer {
               // ENDPOINT send.message.:userId:chatroomId
               if (routingMetadata.substring(1).startsWith('send.message.')) {
                 const data = routingMetadata.split('.');
-                const userId = data[2];
+                const userId = data[2]; // UserId is keept if neeeded for future updates
                 const chatroomId = data[3];
-
-                if (payload.data) {
-                  const message = JSON.parse(payload.data.toString());
-
-                  rsocketLogger.info(`FireAndForget received: ${message}`);
-
-                  const newMessage = await messageService.createNewMessage(message.data);
-                  const buffer = Buffer.from(JSON.stringify({ data: newMessage }));
-                  console.log('LLOK', buffer);
-
-                  this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
-                    userConnection.connection.onNext({ data: buffer });
-                  });
-                }
+                await this.handleSendMessage(payload, chatroomId);
               } // Delete message -> Emitting info to clients about deleted message
               else if (routingMetadata.substring(1).startsWith('delete.message.')) {
                 const data = routingMetadata.split('.');
-                const userId = data[2];
+                const userId = data[2]; // UserId is keept if neeeded for future updates
                 const chatroomId = data[3];
-
-                if (payload.data) {
-                  const payloadData = JSON.parse(payload.data.toString());
-
-                  rsocketLogger.info(`FireAndForget delete message received: ${payloadData.data.deleteMessageId}`);
-                  console.log('LOOK', payload.data);
-
-                  await messageService.deleteMessageById(payloadData.data.deleteMessageId);
-                  this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
-                    userConnection.connection.onNext({ data: payload.data });
-                  });
-                }
+                await this.handleDeleteMessage(payload, chatroomId);
               }
               // Removing client who closes rsocket connection
               else if (routingMetadata.substring(1).startsWith('close.')) {
                 const data = routingMetadata.split('.');
-                const userId = data[1];
+                const userId = data[1]; // UserId is keept if neeeded for future updates
                 const chatroomId = data[2];
-
-                console.log(payload.data.toString('utf8'));
-
-                if (payload.data) {
-                  const rsocketConnectionId = JSON.parse(payload.data.toString());
-
-                  rsocketLogger.info(`FireAndForget closing received: ${rsocketConnectionId.data}`);
-                  this.removeUserFromChatroom(chatroomId, rsocketConnectionId.data);
-                }
+                await this.handleCloseConnection(payload, chatroomId);
               } else {
                 rsocketLogger.error(`No handler for route: ${routingMetadata}`);
-                return {
-                  cancel: () => {},
-                  request: _n => {},
-                  onExtension: () => {},
-                };
+                return this.createEmptyResponse();
               }
             },
 
             requestStream: (payload, initialRequestN, responderStream) => {
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
-                return {
-                  cancel: () => {},
-                  request: _n => {},
-                  onExtension: () => {},
-                };
+                return this.createEmptyResponse();
               }
 
               const compositeMetadata = new CompositeMetadata(payload.metadata);
-
-              let routingMetadata;
-              for (const entry of compositeMetadata) {
-                if (entry.mimeType && entry.mimeType === MESSAGE_RSOCKET_ROUTING.toString()) {
-                  routingMetadata = entry.content.toString();
-                  break;
-                }
-              }
+              const routingMetadata = this.getRoutingMetadata(compositeMetadata);
 
               if (!routingMetadata) {
                 rsocketLogger.error('Routing metadata not found');
-                return {
-                  cancel: () => {},
-                  request: _n => {},
-                  onExtension: () => {},
-                };
+                return this.createEmptyResponse();
               }
 
               rsocketLogger.info(`Routing metadata: ${routingMetadata}`);
@@ -173,34 +104,15 @@ class CustomRSocketServer {
                 const data = routingMetadata.split('.');
                 const userId = data[2];
                 const chatroomId = data[3];
-
-                if (payload.data) {
-                  const rsocketConnectionId = JSON.parse(payload.data.toString());
-
-                  rsocketLogger.info(`RequestStream received: ${rsocketConnectionId.data}`);
-
-                  this.addUserToChatroom(chatroomId, rsocketConnectionId.data, responderStream);
-                }
+                this.handleChatroomStream(payload, chatroomId, responderStream);
               } else {
                 rsocketLogger.error(`No handler for route: ${routingMetadata}`);
-                return {
-                  cancel: () => {
-                    this.subscribers.get(chatroomId).delete(userId);
-                  },
-                  request: _n => {},
-                  onExtension: () => {},
-                };
+                return this.createEmptyResponse();
               }
 
-              let requestedResponses = Number.MAX_SAFE_INTEGER;
               return {
-                cancel() {
-                  rsocketLogger.info('stream cancelled by client');
-                },
-                request(n) {
-                  requestedResponses += n;
-                  rsocketLogger.info(`request n: ${n}, requestedResponses: ${requestedResponses}`);
-                },
+                cancel: () => rsocketLogger.info('stream cancelled by client'),
+                request: n => rsocketLogger.info(`request n: ${n}`),
                 onExtension: () => {},
               };
             },
@@ -247,6 +159,66 @@ class CustomRSocketServer {
     }
   }
 
+  createEmptyResponse() {
+    return {
+      cancel: () => {},
+      request: _n => {},
+      onExtension: () => {},
+    };
+  }
+
+  getRoutingMetadata(compositeMetadata) {
+    for (const entry of compositeMetadata) {
+      if (entry.mimeType && entry.mimeType === MESSAGE_RSOCKET_ROUTING.toString()) {
+        return entry.content.toString();
+      }
+    }
+    return null;
+  }
+
+  async handleSendMessage(payload, chatroomId) {
+    if (payload.data) {
+      const message = JSON.parse(payload.data.toString());
+      rsocketLogger.info(`FireAndForget received: ${message}`);
+
+      const newMessage = await messageService.createNewMessage(message.data);
+      const buffer = Buffer.from(JSON.stringify({ data: newMessage }));
+
+      this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
+        userConnection.connection.onNext({ data: buffer });
+      });
+    }
+  }
+
+  async handleDeleteMessage(payload, chatroomId) {
+    if (payload.data) {
+      const payloadData = JSON.parse(payload.data.toString());
+      rsocketLogger.info(`FireAndForget delete message received: ${payloadData.data.deleteMessageId}`);
+
+      await messageService.deleteMessageById(payloadData.data.deleteMessageId);
+      this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
+        userConnection.connection.onNext({ data: payload.data });
+      });
+    }
+  }
+
+  async handleCloseConnection(payload, chatroomId) {
+    if (payload.data) {
+      const rsocketConnectionId = JSON.parse(payload.data.toString());
+      rsocketLogger.info(`FireAndForget closing received: ${rsocketConnectionId.data}`);
+      this.removeUserFromChatroom(chatroomId, rsocketConnectionId.data);
+    }
+  }
+
+  handleChatroomStream(payload, chatroomId, responderStream) {
+    if (payload.data) {
+      const rsocketConnectionId = JSON.parse(payload.data.toString());
+      rsocketLogger.info(`RequestStream received: ${rsocketConnectionId.data}`);
+
+      this.addUserToChatroom(chatroomId, rsocketConnectionId.data, responderStream);
+    }
+  }
+
   getConnectionByChatroomId(userId) {
     return this.connections.get(userId);
   }
@@ -273,16 +245,6 @@ class CustomRSocketServer {
       }
     }
   }
-
-  // emitReceivedMessage(chatMessage) {
-  //   const chatroomId = chatMessage.chatroomId;
-  //   const sinks = this.chatroomSinks.get(chatroomId);
-  //   if (sinks) {
-  //     sinks.forEach(sink => {
-  //       sink.onNext({ data: Buffer.from(JSON.stringify(chatMessage)) });
-  //     });
-  //   }
-  // }
 }
 
 export default CustomRSocketServer;
