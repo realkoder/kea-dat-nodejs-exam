@@ -43,7 +43,7 @@ class CustomRSocketServer {
       acceptor: {
         accept: async (payload, remotePeer) => {
           return {
-            fireAndForget: async payload => {              
+            fireAndForget: async payload => {
               if (!payload.metadata) {
                 rsocketLogger.error('Payload metadata is undefined');
                 this.createEmptyResponse();
@@ -58,29 +58,27 @@ class CustomRSocketServer {
               }
 
               rsocketLogger.info(`Routing metadata: ${routingMetadata}`);
+              let chatroomId;
 
-              // ENDPOINT send.message.:userId:chatroomId
-              if (routingMetadata.substring(1).startsWith('send.message.')) {
-                const data = routingMetadata.split('.');
-                const userId = data[2]; // UserId is keept if neeeded for future updates
-                const chatroomId = data[3];
-                await this.handleSendMessage(payload, chatroomId);
-              } // Delete message -> Emitting info to clients about deleted message
-              else if (routingMetadata.substring(1).startsWith('delete.message.')) {
-                const data = routingMetadata.split('.');
-                const userId = data[2]; // UserId is keept if neeeded for future updates
-                const chatroomId = data[3];
-                await this.handleDeleteMessage(payload, chatroomId);
-              }
-              // Removing client who closes rsocket connection
-              else if (routingMetadata.substring(1).startsWith('close.')) {
-                const data = routingMetadata.split('.');
-                const userId = data[1]; // UserId is keept if neeeded for future updates
-                const chatroomId = data[2];
-                await this.handleCloseConnection(payload, chatroomId);
-              } else {
-                rsocketLogger.error(`No handler for route: ${routingMetadata}`);
-                return this.createEmptyResponse();
+              switch (true) {
+                case routingMetadata.substring(1).startsWith('send.message.'):
+                  chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
+                  await this.handleSendMessage(payload, chatroomId);
+                  break;
+
+                case routingMetadata.substring(1).startsWith('delete.message.'):
+                  chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
+                  await this.handleDeleteMessage(payload, chatroomId);
+                  break;
+
+                case routingMetadata.substring(1).startsWith('close.message.'):
+                  chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
+                  await this.handleCloseConnection(payload, chatroomId);
+                  break;
+                  
+                default:
+                  rsocketLogger.error(`No handler for route: ${routingMetadata}`);
+                  return this.createEmptyResponse();
               }
             },
 
@@ -102,7 +100,7 @@ class CustomRSocketServer {
 
               if (routingMetadata.substring(1).startsWith('chatroom.stream.')) {
                 const data = routingMetadata.split('.');
-                const userId = data[2];
+                // data[2] is userId if needed for future implementations
                 const chatroomId = data[3];
                 this.handleChatroomStream(payload, chatroomId, responderStream);
               } else {
@@ -174,6 +172,13 @@ class CustomRSocketServer {
       }
     }
     return null;
+  }
+
+  getIdsMessageRouting(routingMetadata) {
+    const data = routingMetadata.split('.');
+    const userId = data[2]; // UserId is keept if neeeded for future updates
+    const chatroomId = data[3];
+    return { userId, chatroomId };
   }
 
   async handleSendMessage(payload, chatroomId) {

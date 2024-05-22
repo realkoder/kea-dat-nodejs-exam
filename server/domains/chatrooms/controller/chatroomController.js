@@ -29,7 +29,7 @@ async function getChatrooms(req, res, next) {
  * @param { Response } res
  * @param { NextFunction } next
  */
-async function getChatroomsByUserId(req, res, next) {
+async function getChatroomsByUserId(req, res, next) {  
   try {
     const fetchedChatrooms = await chatroomService.getChatroomsById(req.params.id);
     if (!fetchedChatrooms) return res.status(400).send({ message: 'Could not fetch Chatrooms by userId' });

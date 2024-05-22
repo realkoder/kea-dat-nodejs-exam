@@ -55,7 +55,7 @@
       window.addEventListener('beforeunload', function (event) {
         if (rsocket) {
           rsocket.fireAndForgetCloseConnection(
-            `close.${$userStore.id}.${chatroomId}`,
+            `close.message.${$userStore.id}.${chatroomId}`,
             {
               data: rsocketConnectionId,
             },
@@ -70,7 +70,7 @@
   onDestroy(() => {
     if (rsocket) {
       rsocket.fireAndForgetCloseConnection(
-        `close.${$userStore.id}.${chatroomId}`,
+        `close.message.${$userStore.id}.${chatroomId}`,
         {
           data: rsocketConnectionId,
         },
@@ -91,48 +91,42 @@
   }
 
   function sendMessage(textMessage) {
-    if (textMessage === '') {
+    if (!textMessage || textMessage === '') {
       toast.error('Not possible to send empty message');
       return;
     }
     if (rsocket) {
-      rsocket.fireAndForget(
-        `send.message.${$userStore.id}.${chatroomId}`,
-        {
-          data: {
-            userId: $userStore.id,
-            textMessage: textMessage,
-            chatroomId: chatroomId,
-          },
+      rsocket.fireAndForget(`send.message.${$userStore.id}.${chatroomId}`, {
+        data: {
+          userId: $userStore.id,
+          textMessage: textMessage,
+          chatroomId: chatroomId,
         },
-      );
+      });
     }
   }
 
-  function deleteMessage(messageId) {    
+  function deleteMessage(messageId) {
     if (rsocket) {
-      rsocket.fireAndForget(
-        `delete.message.${$userStore.id}.${chatroomId}`,
-        {
-          data: {
-            deleteMessageId: messageId,
-          },
+      rsocket.fireAndForget(`delete.message.${$userStore.id}.${chatroomId}`, {
+        data: {
+          deleteMessageId: messageId,
         },
-      );
+      });
     }
   }
 
-  function appendChatMessages(chatMessage) {   
+  function appendChatMessages(chatMessage) {
     chatMessages = [...chatMessages, chatMessage];
   }
 
-  function removeChatMessage(deleteMessageId) {    
+  function removeChatMessage(deleteMessageId) {
     chatMessages = chatMessages.filter(
       (chatMessage) => chatMessage._id !== deleteMessageId,
     );
   }
 
-  function appendOlderMessages(olderChatMessages) {    
+  function appendOlderMessages(olderChatMessages) {
     const combinedMessages = [...olderChatMessages, ...chatMessages];
     const uniqueMessagesSet = new Set(
       combinedMessages.map((message) => message._id),
