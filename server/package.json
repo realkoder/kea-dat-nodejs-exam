@@ -5,7 +5,7 @@
   "description": "Server for SSR, Authentication, DB-management and other backend related features for minified IntelliOptima exam project",
   "main": "app.js",
   "scripts": {
-    "dev": "node app.js | pino-pretty",
+    "dev": "nodemon app.js | pino-pretty",
     "watch": "NODE_ENV=development nodemon app.js | pino-pretty",
     "lint": "npx eslint . --fix",
     "format": "prettier --write \"**/*.js\"",

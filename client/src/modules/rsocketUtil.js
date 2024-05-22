@@ -12,6 +12,6 @@ export function createRoute(route) {
     const map = new Map();
     map.set(WellKnownMimeType.MESSAGE_RSOCKET_ROUTING, encodedRoute);
     compositeMetaData = encodeCompositeMetadata(map);
-  }
+  }  
   return compositeMetaData;
 }

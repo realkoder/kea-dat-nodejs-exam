@@ -1,10 +1,31 @@
 <script>
+  import AlertDialog from '../../../components/AlertDialog/AlertDialog.svelte';
   import userStore from '../../../stores/userStore';
 
   export let messageUserId;
   // export let profileImage;
   export let currentChatroom;
+  export let messageId;
   export let content;
+  export let deleteMessage;
+
+  let isHovered = false;
+  let alertDialogIsClicked = false;
+
+  function handleMouseEnter() {
+    isHovered = true;
+  }
+
+  function handleMouseLeave() {
+    isHovered = false;
+  }
+
+  function handleDeleteClick() {
+    deleteMessage(messageId);
+    alertDialogIsClicked = false;
+  }
+
+  //  on:click={() => deleteMessage(messageId)}
 </script>
 
 <div class="flex h-full items-end px-5 py-8 md:px-3">
@@ -21,7 +42,13 @@
     </div>
   {/if}
 
-  <div class="w-full space-y-6 pl-6 md:pl-4">
+  <div
+    class="w-full space-y-6 pl-6 md:pl-4"
+    on:mouseenter={handleMouseEnter}
+    on:mouseleave={handleMouseLeave}
+    role="button"
+    tabindex="0"
+  >
     <div
       class="relative flex w-full {messageUserId === $userStore.id
         ? 'justify-end'
@@ -49,8 +76,18 @@
       >
         {content}
       </div>
+      {#if (isHovered || alertDialogIsClicked) && messageUserId === $userStore.id}
+        <div class="mr-16">
+          <AlertDialog
+          item={"message"}
+            toggleAlertDialogIsClicked={() =>
+              (alertDialogIsClicked = !alertDialogIsClicked)}
+            title={'Delete message'}
+            handleAccept={handleDeleteClick}
+          />
+        </div>
+      {/if}
     </div>
-    <slot></slot>
   </div>
 
   {#if messageUserId === $userStore.id}
@@ -66,33 +103,3 @@
     </div>
   {/if}
 </div>
-
-<!-- <script lang="ts"> 
-  import * as Card from '$lib/components/ui/card/index.js';  
-  import { Input } from '$lib/components/ui/input/index.js';
-  import { Label } from '$lib/components/ui/label/index.js';
-
-  export let message;
-</script>
-
-<Card.Root class="">
-  <Card.Header>
-    <Card.Title>Message from {textM}</Card.Title>
-    <Card.Description>Deploy your new project in one-click.</Card.Description>
-  </Card.Header>
-  <Card.Content>
-    <div class="grid w-full items-center gap-4">
-      <div class="flex flex-col space-y-1.5">
-        <Label for="name">Name</Label>
-        <Input id="name" placeholder="Name of your project" />
-      </div>
-      <div class="flex flex-col space-y-1.5">
-        {message.textMessage}
-      </div>
-    </div>
-  </Card.Content>
-   <Card.Footer class="flex justify-between">
-      <Button variant="outline">Cancel</Button>
-      <Button>Deploy</Button>
-    </Card.Footer>
-</Card.Root> -->

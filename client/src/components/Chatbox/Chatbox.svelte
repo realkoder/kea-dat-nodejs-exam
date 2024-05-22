@@ -8,6 +8,7 @@
   import { BASE_URL } from '../../stores/generalStore';
 
   export let sendMessage;
+  export let deleteMessage;
   export let chatMessages;
   export let chatroom;
   export let appendOlderMessages;
@@ -49,6 +50,7 @@
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       )}
+      {deleteMessage}
       {chatroom}
     />
   </div>

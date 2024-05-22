@@ -86,19 +86,36 @@ class CustomRSocketServer {
                 if (payload.data) {
                   const message = JSON.parse(payload.data.toString());
 
-                  rsocketLogger.info(`FireAndForget received: ${message}`);                  
+                  rsocketLogger.info(`FireAndForget received: ${message}`);
 
-                  // TODO STORE MESSAGE IN MONGODB
-                  await messageService.createNewMessage(message.data);
+                  const newMessage = await messageService.createNewMessage(message.data);
+                  const buffer = Buffer.from(JSON.stringify({ data: newMessage }));
+                  console.log('LLOK', buffer);
 
                   this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
-                    userConnection.connection.onNext({ data: payload.data });
-                    console.log('Emitting message', message);
+                    userConnection.connection.onNext({ data: buffer });
                   });
                 }
+              } // Delete message -> Emitting info to clients about deleted message
+              else if (routingMetadata.substring(1).startsWith('delete.message.')) {
+                const data = routingMetadata.split('.');
+                const userId = data[2];
+                const chatroomId = data[3];
 
-                // Removing client who closes rsocket connection
-              } else if (routingMetadata.substring(1).startsWith('close.')) {
+                if (payload.data) {
+                  const payloadData = JSON.parse(payload.data.toString());
+
+                  rsocketLogger.info(`FireAndForget delete message received: ${payloadData.data.deleteMessageId}`);
+                  console.log('LOOK', payload.data);
+
+                  await messageService.deleteMessageById(payloadData.data.deleteMessageId);
+                  this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
+                    userConnection.connection.onNext({ data: payload.data });
+                  });
+                }
+              }
+              // Removing client who closes rsocket connection
+              else if (routingMetadata.substring(1).startsWith('close.')) {
                 const data = routingMetadata.split('.');
                 const userId = data[1];
                 const chatroomId = data[2];

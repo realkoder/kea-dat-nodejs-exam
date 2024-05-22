@@ -59,7 +59,7 @@ class CustomRSocket {
     }
   }
 
-  fireAndForgetMessage = async (route, data) => {
+  fireAndForget = async (route, data) => {
     return new Promise((resolve, reject) => {
       this.rsocketConnection.fireAndForget(
         {
@@ -93,7 +93,7 @@ class CustomRSocket {
     });
   };
 
-  requestStream = async (route, data, setChatMessages) => {
+  requestStream = async (route, data, setChatMessages, removeChatMessage) => {
     return new Promise((resolve, reject) => {
       if (!this.rsocketConnection) return;
 
@@ -109,15 +109,20 @@ class CustomRSocket {
             reject(error);
           },
           onNext: async (payload, isComplete) => {
-            const newMessage = payload.data
+            const data = payload.data
               ? { ...JSON.parse(payload.data).data }
               : undefined;
 
-            if (newMessage?.chunk?.textMessage === 'Gpt Finished message') {
+            console.log(payload);
+
+            if (data?.chunk?.textMessage === 'Gpt Finished message') {
               return;
             }
-            
-            setChatMessages(newMessage);
+            if (data.deleteMessageId) {
+              removeChatMessage(data.deleteMessageId);
+            } else {
+              setChatMessages(data);
+            }
           },
           onComplete: () => {
             resolve(connector);

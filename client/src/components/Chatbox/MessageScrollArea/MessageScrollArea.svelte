@@ -3,6 +3,7 @@
   import MessageCard from '../MessageCard/MessageCard.svelte';
   import { afterUpdate, beforeUpdate, onMount } from 'svelte';
 
+  export let deleteMessage;
   export let chatMessages;
   export let chatroom;
   let chatWindowRef;
@@ -44,10 +45,12 @@
     <h4 class="text-sm">Messages</h4>
     {#each chatMessages as message}
       <div class="mb-4 text-sm font-medium leading-none">
-        <MessageCard
+        <MessageCard     
+          messageId={message._id}
           content={message.textMessage}
           currentChatroom={chatroom}
           messageUserId={message.userId}
+          {deleteMessage}
         />
       </div>
       <Separator class="my-2" />

@@ -47,7 +47,8 @@
       rsocket.requestStream(
         `chatroom.stream.${$userStore.id}.${chatroomId}`,
         { data: rsocketConnectionId },
-        setChatMessages,
+        appendChatMessages,
+        removeChatMessage,
       );
 
       // CLEANUP IF RELOADING
@@ -95,7 +96,7 @@
       return;
     }
     if (rsocket) {
-      rsocket.fireAndForgetMessage(
+      rsocket.fireAndForget(
         `send.message.${$userStore.id}.${chatroomId}`,
         {
           data: {
@@ -108,11 +109,30 @@
     }
   }
 
-  function setChatMessages(chatMessage) {
+  function deleteMessage(messageId) {    
+    if (rsocket) {
+      rsocket.fireAndForget(
+        `delete.message.${$userStore.id}.${chatroomId}`,
+        {
+          data: {
+            deleteMessageId: messageId,
+          },
+        },
+      );
+    }
+  }
+
+  function appendChatMessages(chatMessage) {   
     chatMessages = [...chatMessages, chatMessage];
   }
 
-  function appendOlderMessages(olderChatMessages) {
+  function removeChatMessage(deleteMessageId) {    
+    chatMessages = chatMessages.filter(
+      (chatMessage) => chatMessage._id !== deleteMessageId,
+    );
+  }
+
+  function appendOlderMessages(olderChatMessages) {    
     const combinedMessages = [...olderChatMessages, ...chatMessages];
     const uniqueMessagesSet = new Set(
       combinedMessages.map((message) => message._id),
@@ -135,7 +155,13 @@
         <h1 class="">{chatroom.chatroomName}</h1>
       {/if}
 
-      <Chatbox {sendMessage} {chatMessages} {chatroom} {appendOlderMessages} />
+      <Chatbox
+        {sendMessage}
+        {deleteMessage}
+        {chatMessages}
+        {chatroom}
+        {appendOlderMessages}
+      />
     </main>
   </div>
 </div>

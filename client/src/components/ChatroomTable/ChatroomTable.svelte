@@ -66,7 +66,7 @@
   function getMoment(date) {
     dayjs.extend(relativeTime);
 
-    const timeAgo = dayjs(date).fromNow();    
+    const timeAgo = dayjs(date).fromNow();
 
     return timeAgo;
   }
@@ -117,6 +117,9 @@
           >
           <Table.Cell class="items-center text-center">
             <AlertDialog
+              item={'chatroom'}
+              toggleAlertDialogIsClicked={undefined}
+              title={'Delete chatroom'}
               handleAccept={() => handleDeleteChatroom(chatroom._id)}
             />
           </Table.Cell>
