@@ -124,6 +124,7 @@
     chatMessages = chatMessages.filter(
       (chatMessage) => chatMessage._id !== deleteMessageId,
     );
+    toast.success('A message was deleted!');
   }
 
   function appendOlderMessages(olderChatMessages) {
