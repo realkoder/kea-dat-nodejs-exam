@@ -28,7 +28,7 @@
             }));
             setTimeout(() => {
               navigate('/home');
-            }, 1000);
+            }, 1500);
           } else {
             toast.error('Verification failed, please check your credentials and try again.');
           }

@@ -71,13 +71,20 @@ const loginWithCredentials = async (req, res, next) => {
 const verifyLoginAccount = async (req, res, next) => {
   try {
     const userLogin = await LoginService.getLogin(req.body.username);
-    if (!userLogin){
-      return res.status(401).send({ message: 'Authentication failed. User not found or password incorrect.' });
+    if (!userLogin) {
+      return res.status(401).send({ message: 'Verification failed. User not found or verification code incorrect.' });
     }
 
-    
+    if (req.body.verificationCode !== userLogin.verificationCode) {
+      return res.status(401).send({ message: 'Verification failed. User not found or verification code incorrect.' });
+    }
 
-    const jwtUserInfo = { id: userLogin.id, username: userLogin.username, isVerified: userLogin.isVerified };
+    const verifiedLogin = await LoginService.setIsVerified(userLogin.id);
+    if (!verifiedLogin) {
+      return res.status(401).send({ message: 'Verification failed. User not found or verification code incorrect.' });
+    }
+
+    const jwtUserInfo = { id: userLogin.id, username: userLogin.username, isVerified: verifiedLogin.isVerified };
     const tokens = loginMiddleware(jwtUserInfo);
 
     res.cookie('accessToken', tokens.accessToken, {

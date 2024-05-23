@@ -40,7 +40,7 @@ async function createNewUserWithLogin({ name, email, username, password, secretP
 
         const emailTemplate = renderEmailTemplate(signupEmailTemplate, {
           name: capitalizeName(name),
-          clickLink: 'http://localhost:3000/',
+          clickLink: `http://localhost:3000/verification/${createdLogin.username}`,
           verificationCode: verificationCodeText,
         });
 
@@ -114,6 +114,11 @@ function findUserById(userId) {
     });
 }
 
+async function setIsVerified(loginId) {
+  serviceLogger.info(`Updating login isVerifed with id: ${loginId}`);
+  return LoginRepository.setIsVerified(loginId);
+}
+
 async function resetPassword(user, newPassword, secretPhrase, userLogin) {
   if (await bcrypt.compare(secretPhrase, userLogin.secretPhrase)) {
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
@@ -172,6 +177,7 @@ export default {
   loginWithCredentials,
   getLogin,
   findUserById,
+  setIsVerified,
   resetPassword,
   sendEmailForPasswordReset,
   logoutUser,
