@@ -5,16 +5,11 @@
   export let title;
   export let item;
   export let handleAccept;
-  export let toggleAlertDialogIsClicked;
 </script>
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button
-      on:click={() => toggleAlertDialogIsClicked?.()}
-      builders={[builder]}
-      variant="destructive">{title}</Button
-    >
+    <Button builders={[builder]} variant="destructive">{title}</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     <AlertDialog.Header>
@@ -27,9 +22,7 @@
       </AlertDialog.Description>
     </AlertDialog.Header>
     <AlertDialog.Footer>
-      <AlertDialog.Cancel on:click={() => toggleAlertDialogIsClicked?.()}
-        >Cancel</AlertDialog.Cancel
-      >
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action on:click={() => handleAccept()}
         >Continue</AlertDialog.Action
       >

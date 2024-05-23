@@ -117,8 +117,7 @@
           >
           <Table.Cell class="items-center text-center">
             <AlertDialog
-              item={'chatroom'}
-              toggleAlertDialogIsClicked={undefined}
+              item={'chatroom'}              
               title={'Delete chatroom'}
               handleAccept={() => handleDeleteChatroom(chatroom._id)}
             />

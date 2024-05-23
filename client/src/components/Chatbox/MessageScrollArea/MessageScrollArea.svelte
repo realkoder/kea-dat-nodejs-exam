@@ -46,10 +46,8 @@
     {#each chatMessages as message}
       <div class="mb-4 text-sm font-medium leading-none">
         <MessageCard     
-          messageId={message._id}
-          content={message.textMessage}
-          currentChatroom={chatroom}
-          messageUserId={message.userId}
+          message={message}          
+          currentChatroom={chatroom}          
           {deleteMessage}
         />
       </div>

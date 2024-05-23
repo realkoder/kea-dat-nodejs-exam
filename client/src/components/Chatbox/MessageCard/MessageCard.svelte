@@ -1,35 +1,15 @@
 <script>
-  import AlertDialog from '../../../components/AlertDialog/AlertDialog.svelte';
   import userStore from '../../../stores/userStore';
-
-  export let messageUserId;
+  import MessageHoverCard from '../MessageHoverCard/MessageHoverCard.svelte';
+  
   // export let profileImage;
   export let currentChatroom;
-  export let messageId;
-  export let content;
+  export let message;  
   export let deleteMessage;
-
-  let isHovered = false;
-  let alertDialogIsClicked = false;
-
-  function handleMouseEnter() {
-    isHovered = true;
-  }
-
-  function handleMouseLeave() {
-    isHovered = false;
-  }
-
-  function handleDeleteClick() {
-    deleteMessage(messageId);
-    alertDialogIsClicked = false;
-  }
-
-  //  on:click={() => deleteMessage(messageId)}
 </script>
 
 <div class="flex h-full items-end px-5 py-8 md:px-3">
-  {#if messageUserId !== $userStore.id}
+  {#if message.userId !== $userStore.id}
     <div class="relative">
       <div class="absolute -right-12 -top-7 h-11 w-11 shrink-0">
         <div
@@ -42,26 +22,20 @@
     </div>
   {/if}
 
-  <div
-    class="w-full space-y-6 pl-6 md:pl-4"
-    on:mouseenter={handleMouseEnter}
-    on:mouseleave={handleMouseLeave}
-    role="button"
-    tabindex="0"
-  >
+  <div class="w-full space-y-6 pl-6 md:pl-4">
     <div
-      class="relative flex w-full {messageUserId === $userStore.id
+      class="relative flex w-full {message.userId === $userStore.id
         ? 'justify-end'
         : 'justify-start'}"
     >
       <p
-        class="absolute {messageUserId === $userStore.id
+        class="absolute {message.userId === $userStore.id
           ? '-top-6 right-5 justify-end'
           : '-left-1 -top-6 justify-start'} text-[12px] text-[#9e9e9e]"
       >
         {#if currentChatroom && currentChatroom.members}
           {#each currentChatroom.members as member}
-            {#if member._id === messageUserId}
+            {#if member._id === message.userId}
               {member.user.fullName}
             {/if}
           {/each}
@@ -69,28 +43,22 @@
       </p>
 
       <div
-        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 flex max-w-[90%] items-center overflow-auto whitespace-pre-wrap break-words break-all rounded-lg border py-2 font-sans md:text-[14px] {messageUserId ===
+        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 flex max-w-[90%] items-center overflow-auto whitespace-pre-wrap break-words break-all rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
         $userStore.id
           ? 'dark:shadow-n-7 flex-row-reverse pl-3 pr-9 shadow-lg'
           : 'dark:shadow-n-7 pl-9 pr-3 shadow-lg'}"
       >
-        {content}
+        {message.textMessage}
       </div>
-      {#if (isHovered || alertDialogIsClicked) && messageUserId === $userStore.id}
-        <div class="mr-16">
-          <AlertDialog
-          item={"message"}
-            toggleAlertDialogIsClicked={() =>
-              (alertDialogIsClicked = !alertDialogIsClicked)}
-            title={'Delete message'}
-            handleAccept={handleDeleteClick}
-          />
-        </div>
-      {/if}
+      <!-- {#if (isHovered || alertDialogIsClicked) && messageUserId === $userStore.id} -->
+      <div class="mr-16">
+        <MessageHoverCard {message} {deleteMessage} />
+      </div>
+      <!-- {/if} -->
     </div>
   </div>
 
-  {#if messageUserId === $userStore.id}
+  {#if message.userId === $userStore.id}
     <div class="relative">
       <div class="absolute -top-7 right-1 h-11 w-11 shrink-0">
         <div
