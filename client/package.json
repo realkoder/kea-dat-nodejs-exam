@@ -41,6 +41,7 @@
     "rsocket-tcp-server": "^1.0.0-alpha.3",
     "rsocket-websocket-client": "^1.0.0-alpha.3",
     "rsocket-websocket-server": "^1.0.0-alpha.3",
+    "svelte-otp": "^1.0.9",
     "svelte-radix": "^1.1.0",
     "svelte-routing": "^2.12.0",
     "svelte-sonner": "^0.3.22",

@@ -19,6 +19,7 @@
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
   import Chat from './pages/Chat/Chat.svelte';
+  import Verification from './pages/Verification/Verification.svelte';
 
   export let url = '';
 
@@ -26,7 +27,8 @@
     if (
       !$isAuthenticated &&
       window.location.pathname !== '/' &&
-      window.location.pathname !== '/reset-password'
+      window.location.pathname !== '/reset-password' &&
+      !window.location.pathname.includes('/verification')
     ) {
       const isAuthenticated = await verifyAuth(
         `${$BASE_URL}/api/v1/auth/verifyAuth`,
@@ -57,6 +59,7 @@
       <Route path="/" component={Login} />
       <Route path="/home" component={Home} />
       <Route path="/chat/:chatroomId" component={Chat} />
+      <Route path="/verification/:username" component={Verification} />
       <Route path="/reset-password" component={ResetPassword} />
     </section>
   </main>

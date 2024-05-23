@@ -5,6 +5,7 @@ import {
   renderEmailTemplate,
   requestPasswordResetEmailTemplate,
   passordUpdatedEmailTemplate,
+  signupEmailTemplate,
 } from '../../../utils/loadEmailTemplates.js';
 import { capitalizeName } from '../../../utils/utilsFunctions.js';
 import UserRepository from '../../users/repository/UserRepository.js';
@@ -20,6 +21,7 @@ async function createNewUserWithLogin({ name, email, username, password, secretP
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const hashedSecretPhrase = await bcrypt.hash(secretPhrase, saltRounds);
+    const verificationCode = (Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000).toString();
 
     return UserRepository.create({ name, email })
       .then(createdUserId =>
@@ -28,10 +30,29 @@ async function createNewUserWithLogin({ name, email, username, password, secretP
           username,
           password: hashedPassword,
           secretPhrase: hashedSecretPhrase,
+          verificationCode,
+          isVerified: false,
         }),
       )
       .then(createdLogin => {
         serviceLogger.info(`Login created successfully for user: ${username}`);
+        const verificationCodeText = `Your verification code: ${verificationCode}`;
+
+        const emailTemplate = renderEmailTemplate(signupEmailTemplate, {
+          name: capitalizeName(name),
+          clickLink: 'http://localhost:3000/',
+          verificationCode: verificationCodeText,
+        });
+
+        resend.emails
+          .send({
+            from: 'info@intellioptima.com',
+            to: [`${email}`],
+            subject: 'Welcome to IntelliOptima',
+            html: emailTemplate,
+          })
+          .then(data => serviceLogger.info(`Email sent with data: ${data}`));
+
         return createdLogin;
       })
       .catch(error => {
