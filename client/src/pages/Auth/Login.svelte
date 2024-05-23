@@ -88,11 +88,14 @@
           },
           headers: '',
         })
-        .then(() =>
+        .then(() => {
           toast.success(
-            'New account created, please use new credentials to login',
-          ),
-        )
+            'New account created, please verify your account to login - check your email',
+          );
+          setTimeout(() => {
+            navigate(`/verification/${loginUserInputs.username}`);
+          }, 2000);
+        })
         .catch(() => toast.error('Something went wrong, please try again'));
     } catch (error) {
       validationErrors = error.formErrors.fieldErrors;

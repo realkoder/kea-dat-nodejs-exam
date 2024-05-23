@@ -32,3 +32,4 @@ In addition to Eslint, we have integrated Prettier to automatically format our c
 
 `Relative Time` -> https://www.npmjs.com/package/relative-time
 `Dayjs: ` -> https://www.npmjs.com/package/dayjs
+`OTP component: one-time-password` -> https://github.com/shubhadip/svelte-otp?tab=readme-ov-file

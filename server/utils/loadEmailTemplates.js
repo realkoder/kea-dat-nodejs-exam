@@ -14,7 +14,8 @@ export function renderEmailTemplate(emailTemplate, config = {}) {
   let renderedEmailTemplate = emailTemplate
     .toString()
     .replace('$USER_NAME$', config.name ?? '')
-    .replace('$CLICK_LINK$', config.clickLink ?? '')
+    .replace('$CLICK_LINK$', config.clickLink ?? '')    
+    .replace('$VERIFICATION_CODE$', config.verificationCode ?? '')
     .replace('$VERIFICATION_CODE$', config.verificationCode ?? '');
 
   return renderedEmailTemplate;

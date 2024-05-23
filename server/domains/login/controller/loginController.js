@@ -99,7 +99,7 @@ const verifyLoginAccount = async (req, res, next) => {
     });
 
     return res.status(200).send({
-      message: 'Login successfull',
+      message: 'Verification successfull',
       user: { id: userLogin.id, username: userLogin.username },
     });
   } catch (error) {

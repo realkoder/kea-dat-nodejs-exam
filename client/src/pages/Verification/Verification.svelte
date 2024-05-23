@@ -1,27 +1,27 @@
 <script>
   import Button from '$lib/components/ui/button/button.svelte';
-    import genericApi from '../../utils/api/genericApi';
+  import genericApi from '../../utils/api/genericApi';
   import entryImage from '../../assets/images/entry-pic.svg';
   import OtpInput from 'svelte-otp';
-    import { BASE_URL } from '../../stores/generalStore';
-    import { toast } from 'svelte-sonner';
-    import userStore from '../../stores/userStore';
-    import { navigate } from 'svelte-routing';
+  import { BASE_URL } from '../../stores/generalStore';
+  import { toast } from 'svelte-sonner';
+  import userStore from '../../stores/userStore';
+  import { navigate } from 'svelte-routing';
 
   export let username;
-
   let otpInstance;
+  
   function handleClick() {
     const verificationCode = otpInstance?.getValue().completevalue;
     if (verificationCode !== '      ' && username) {
-        genericApi
+      genericApi
         .POST(`${$BASE_URL}/api/v1/auth/verify`, {
-          body: {verificationCode, username},
+          body: { verificationCode, username },
           headers: '',
         })
         .then((response) => {
           console.log(response);
-          if (response.message === 'Login successfull') {
+          if (response.message === 'Verification successfull') {
             toast.success('You are now verified!');
             userStore.update((user) => ({
               ...response.user,
@@ -30,7 +30,9 @@
               navigate('/home');
             }, 1500);
           } else {
-            toast.error('Verification failed, please check your credentials and try again.');
+            toast.error(
+              'Verification failed, please check your credentials and try again.',
+            );
           }
         })
         .catch((error) => {
@@ -39,7 +41,9 @@
         });
     } else {
       console.log('value on click', verificationCode);
-      toast.error('Verification failed, please check your credentials and try again.');
+      toast.error(
+        'Verification failed, please check your credentials and try again.',
+      );
     }
   }
 </script>
@@ -47,7 +51,9 @@
 <div class="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
   <div class="flex items-center justify-center py-12">
     <div class="mx-auto grid w-[350px] gap-6 text-center">
-      <span class="text-lg">Fill in your verification code</span>
+      <span class="text-md"
+        >Check your email - fill in your verification code</span
+      >
       <OtpInput
         numberOfInputs={6}
         customTextInputClass="bg-white border rounded-sm border-black"
