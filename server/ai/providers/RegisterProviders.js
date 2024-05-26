@@ -9,5 +9,6 @@ aiFactory.registerProvider('claude', AnthropicAIProvider);
 aiFactory.registerProvider('gemini', VertexAIProvider);
 aiFactory.registerProvider('gpt', OpenAIProvider);
 
+Object.freeze(aiFactory);
 
 export default aiFactory;
