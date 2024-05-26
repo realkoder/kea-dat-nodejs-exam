@@ -29,7 +29,7 @@
         <Button
           variant="ghost"
           size="icon"
-          class="bg-muted rounded-lg"
+          class="rounded-lg bg-muted"
           aria-label="Playground"
           builders={[builder]}
         >

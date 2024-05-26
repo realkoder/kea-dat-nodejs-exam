@@ -82,7 +82,12 @@
   function fetchChatroom() {
     genericApi
       .GET(`${$BASE_URL}/api/v1/chatrooms/${chatroomId}`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (response) {
+          return response.json();
+        }
+        throw new Error('No response received');
+      })
       .then((fetchedData) => {
         chatroom = fetchedData.data;
         chatMessages = chatroom.messages;
@@ -147,7 +152,7 @@
       class="mx-auto grid w-full flex-1 gap-4 overflow-auto p-4 md:lg:col-span-full lg:lg:col-span-full lg:w-10/12"
     >
       {#if chatroom}
-        <h1 class="">{chatroom.chatroomName}</h1>
+        <h1 class="h-[50px]">{chatroom.chatroomName}</h1>
       {/if}
 
       <Chatbox

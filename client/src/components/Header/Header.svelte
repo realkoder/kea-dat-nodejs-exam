@@ -26,7 +26,7 @@
 </script>
 
 <header
-  class="bg-background sticky top-0 z-10 flex h-[53px] items-center gap-1 border-b px-4"
+  class="sticky top-0 z-10 flex h-[53px] items-center gap-1 border-b bg-background px-4"
 >
   <h1 class="text-xl font-semibold">IntelliOptima</h1>
   <h1 class="ml-auto text-xl font-semibold">

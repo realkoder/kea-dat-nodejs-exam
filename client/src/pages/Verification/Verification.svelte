@@ -10,7 +10,7 @@
 
   export let username;
   let otpInstance;
-  
+
   function handleClick() {
     const verificationCode = otpInstance?.getValue().completevalue;
     if (verificationCode !== '      ' && username) {
@@ -63,7 +63,7 @@
       <Button on:click={handleClick}>CLICK</Button>
     </div>
   </div>
-  <div class="bg-muted hidden lg:block">
+  <div class="hidden bg-muted lg:block">
     <img
       src={entryImage}
       alt="placeholder"

@@ -142,9 +142,9 @@
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
-                  <Label for="username">Username</Label>
+                  <Label for="login-username">Username</Label>
                   <Input
-                    id="username"
+                    id="login-username"
                     bind:value={username}
                     type="text"
                     placeholder="JonDoe1993"
@@ -152,9 +152,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="password">Password</Label>
+                  <Label for="login-password">Password</Label>
                   <Input
-                    id="password"
+                    id="login-password"
                     bind:value={password}
                     type="password"
                     placeholder="myPassword123"
@@ -179,9 +179,9 @@
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
-                  <Label for="name">Name</Label>
+                  <Label for="signup-name">Name</Label>
                   <Input
-                    id="name"
+                    id="signup-name"
                     bind:value={name}
                     type="text"
                     placeholder="Jon Doe"
@@ -189,9 +189,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="email">Email</Label>
+                  <Label for="signup-email">Email</Label>
                   <Input
-                    id="email"
+                    id="signup-email"
                     bind:value={email}
                     type="email"
                     placeholder="jondoe@hotmail.com"
@@ -199,9 +199,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="username">Username</Label>
+                  <Label for="signup-username">Username</Label>
                   <Input
-                    id="username"
+                    id="signup-username"
                     bind:value={username}
                     type="text"
                     placeholder="JonDoe1993"
@@ -209,9 +209,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="password">Password</Label>
+                  <Label for="signup-password">Password</Label>
                   <Input
-                    id="password"
+                    id="signup-password"
                     bind:value={password}
                     type="password"
                     placeholder="myPassword123"
@@ -219,9 +219,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="secretPhrase">Secret Phrase</Label>
+                  <Label for="signup-secretPhrase">Secret Phrase</Label>
                   <Input
-                    id="secretPhrase"
+                    id="signup-secretPhrase"
                     bind:value={secretPhrase}
                     type="text"
                     placeholder="The Wizard of Oz"
@@ -246,9 +246,9 @@
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
-                  <Label for="username">Username</Label>
+                  <Label for="forgot-username">Username</Label>
                   <Input
-                    id="username"
+                    id="forgot-username"
                     bind:value={username}
                     type="text"
                     placeholder="JonDoe1993"
@@ -256,9 +256,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="email">Email</Label>
+                  <Label for="forgot-email">Email</Label>
                   <Input
-                    id="email"
+                    id="forgot-email"
                     bind:value={email}
                     type="email"
                     placeholder="jondoe@hotmail.com"
@@ -275,7 +275,7 @@
       </Tabs.Root>
     </div>
   </div>
-  <div class="bg-muted hidden lg:block">
+  <div class="hidden bg-muted lg:block">
     <img
       src={entryImage}
       alt="placeholder"

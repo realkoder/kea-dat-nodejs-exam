@@ -1,5 +1,6 @@
+import { handleFetchError } from '../error/handleHtttpMethodsErrors.js';
+
 /**
- *
  * @param {String} url
  */
 function GET(url) {
@@ -10,14 +11,11 @@ function GET(url) {
     },
     credentials: 'include',
   })
-    .then((response) => {      
+    .then((response) => {
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
       return response;
     })
-    .catch((error) => {
-      console.error('Fetch error:', error);
-      throw error;
-    });
+    .catch((error) => handleFetchError(error));
 }
 
 function POST(url, { body, headers }) {
@@ -32,7 +30,7 @@ function POST(url, { body, headers }) {
   })
     .then((response) => response.json())
     .then((result) => result)
-    .catch((error) => error);
+    .catch((error) => handleFetchError(error));
 }
 
 function PUT(url, { body, headers }) {
@@ -47,7 +45,7 @@ function PUT(url, { body, headers }) {
   })
     .then((response) => response.json())
     .then((result) => result)
-    .catch((error) => error);
+    .catch((error) => handleFetchError(error));
 }
 
 function DELETE(url) {
@@ -58,19 +56,16 @@ function DELETE(url) {
     },
     credentials: 'include',
   })
-    .then((response) => {      
+    .then((response) => {
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
       return response;
     })
-    .catch((error) => {
-      console.error('Fetch error:', error);
-      throw error;
-    });
+    .catch((error) => handleFetchError(error));
 }
 
 export default {
   GET,
   POST,
   PUT,
-  DELETE
+  DELETE,
 };

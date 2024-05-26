@@ -24,7 +24,12 @@
   onMount(() => {
     genericApi
       .GET(`${$BASE_URL}/api/v1/chatrooms/userId/${$userStore.id}`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (response) {
+          return response.json();
+        }
+        throw new Error('No response received');
+      })
       .then((fetchedData) => {
         chatrooms = sortChatroomByLatestMessageOrCreatedData(fetchedData);
       })
@@ -51,7 +56,9 @@
   function handleDeleteChatroom(chatroomId) {
     genericApi
       .DELETE(`${$BASE_URL}/api/v1/chatrooms/${chatroomId}`)
-      .then((response) => response.json())
+      .then((response) => {
+        
+      })
       .then((fetchedData) => {
         chatrooms = chatrooms.filter((cur) => cur._id !== chatroomId);
         toast.success('Chatroom deleted!');
@@ -72,7 +79,7 @@
   }
 </script>
 
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center h-[80dvh]">
   <h1 class="mb-8">A list of your selected chatroom members.</h1>
   <Table.Root>
     <Table.Header>
@@ -117,7 +124,7 @@
           >
           <Table.Cell class="items-center text-center">
             <AlertDialog
-              item={'chatroom'}              
+              item={'chatroom'}
               title={'Delete chatroom'}
               handleAccept={() => handleDeleteChatroom(chatroom._id)}
             />

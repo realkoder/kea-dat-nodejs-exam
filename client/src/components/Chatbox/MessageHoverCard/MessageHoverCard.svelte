@@ -42,7 +42,7 @@
           />
         {/if}
         <div class="flex items-center pt-2">
-          <span class="text-muted-foreground text-xs">
+          <span class="text-xs text-muted-foreground">
             Sent {getMoment(message.createdAt)}
           </span>
         </div>

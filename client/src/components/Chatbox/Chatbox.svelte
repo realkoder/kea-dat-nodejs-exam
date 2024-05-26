@@ -4,8 +4,6 @@
   import { Label } from '$lib/components/ui/label/index.js';
   import { Button } from '$lib/components/ui/button/index.js';
   import MessageScrollArea from './MessageScrollArea/MessageScrollArea.svelte';
-  import genericApi from '../../utils/api/genericApi';
-  import { BASE_URL } from '../../stores/generalStore';
 
   export let sendMessage;
   export let deleteMessage;
@@ -13,39 +11,23 @@
   export let chatroom;
   export let appendOlderMessages;
   let textMessage;
-  let page = 2;
-  let isMessagesFetchable = true;
-
-  function fetchMoreMessages() {
-    genericApi
-      .GET(`${$BASE_URL}/api/v1/messages/${chatroom._id}?page=${page}&limit=10`)
-      .then((response) => response.json())
-      .then((fetchedData) => {
-        appendOlderMessages(fetchedData.messages);
-        if (fetchedData.messages.length !== 10) isMessagesFetchable = false;
-        page = page + 1;
-      })
-      .catch((error) => console.error(error));
-  }
 
   function handleKeyDown(event) {
     if (event.shiftKey) return;
     if (event.key === 'Enter') {
       sendMessage(textMessage);
-      
+
       setTimeout(() => (textMessage = ''), 1);
     }
   }
 </script>
 
 <div
-  class="bg-muted/50 relative flex h-full min-h-[50vh] flex-col rounded-xl p-4 lg:col-span-2"
+  class="relative flex min-h-[80dvh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2"
 >
   <div class="flex-1">
-    {#if isMessagesFetchable}
-      <Button on:click={fetchMoreMessages}>FETCH MORE MESSAGE</Button>
-    {/if}
     <MessageScrollArea
+      appendOlderMessages={appendOlderMessages}
       chatMessages={chatMessages.sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
@@ -55,7 +37,7 @@
     />
   </div>
   <form
-    class="bg-background focus-within:ring-ring relative overflow-hidden rounded-lg border focus-within:ring-1"
+    class="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
   >
     <Label for="message" class="sr-only">Message</Label>
     <Textarea

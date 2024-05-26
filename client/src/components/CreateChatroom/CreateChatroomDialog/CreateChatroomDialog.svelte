@@ -40,7 +40,7 @@
           body: newChatroom,
           headers: '',
         })
-        .then((response) => {          
+        .then((response) => {
           if (response.message === 'Successfully created new chatroom') {
             toast.success('New chatroom created!');
             localStorage.setItem('latestChatroomId', response.chatroom._id);
@@ -64,7 +64,7 @@
 
   function handleChatroomMembersChange(member) {
     chatroomMembers = [...chatroomMembers, member];
-    users = users.filter((cur) => cur.email !== member.email);    
+    users = users.filter((cur) => cur.email !== member.email);
   }
 
   function handleRemoveMember(member) {

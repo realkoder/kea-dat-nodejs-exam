@@ -1,10 +1,13 @@
 <script>
   import userStore from '../../../stores/userStore';
   import MessageHoverCard from '../MessageHoverCard/MessageHoverCard.svelte';
-  
+  import profileImage from '../../../assets/images/profile-pic.svg';
+  import userImage from '../../../assets/images/user-pic.svg';
+
+
   // export let profileImage;
   export let currentChatroom;
-  export let message;  
+  export let message;
   export let deleteMessage;
 </script>
 
@@ -15,7 +18,7 @@
         <div
           class="dark:border-n-6 relative aspect-square max-w-[38em] rounded-full border-4 border-white"
         >
-          <!-- <img class="rounded-full object-cover z-1 shadow-xl" src={profileImage} alt="" /> -->
+           <img class="rounded-full object-cover z-1 shadow-xl" src={userImage} alt="" />
           <p class="z-1 rounded-full object-cover shadow-xl">🐍</p>
         </div>
       </div>
@@ -64,8 +67,7 @@
         <div
           class="dark:border-n-6 relative aspect-square max-w-[38em] rounded-full border-4 border-white"
         >
-          <!-- TODO: SHOULD BE USERS PROFILEIMAGE -->
-          <span class="rounded-full object-cover shadow-xl">🦋</span>
+          <img class="rounded-full object-cover z-1 shadow-xl" src={profileImage} alt="" />
         </div>
       </div>
     </div>

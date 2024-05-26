@@ -56,6 +56,8 @@ function getMessagesByChatroomId(chatroomId, page = 1, limit = 10) {
       throw error;
     });
 }
+
+
 function updateMessageById(messageId, message) {
   const filter = { _id: messageId };
   const { id, _id, ...updatedFields } = { ...message };

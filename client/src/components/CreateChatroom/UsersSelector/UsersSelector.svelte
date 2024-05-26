@@ -16,7 +16,7 @@
       {#each users as user}
         <Select.Item
           value={user.name}
-          label={user.name}          
+          label={user.name}
           on:click={() => {
             handleChange(user);
           }}>{user.name}</Select.Item

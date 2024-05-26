@@ -7,7 +7,7 @@ const initialUser = storedUser
 
 const userStore = writable(initialUser);
 
-userStore.subscribe((value) => {  
+userStore.subscribe((value) => {
   localStorage.setItem('user', JSON.stringify(value));
 });
 
