@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import prefixedLogger from '../utils/logger.js';
 import messageService from '../domains/messages/service/messageService.js';
 
+import aiFactory from '../ai/providers/RegisterProviders.js';
+
 const rsocketLogger = prefixedLogger('⚡ [RSocketServer]: ');
 
 const MESSAGE_RSOCKET_ROUTING = WellKnownMimeType.MESSAGE_RSOCKET_ROUTING;
@@ -74,6 +76,11 @@ class CustomRSocketServer {
                 case routingMetadata.substring(1).startsWith('close.message.'):
                   chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
                   await this.handleCloseConnection(payload, chatroomId);
+                  break;
+
+                case routingMetadata.substring(1).startsWith('ai.stream.'):
+                  const { provider, messages } = JSON.parse(payload.data.toString());
+                  await this.handleAIStream(provider, messages, payload.responderStream);
                   break;
                   
                 default:
@@ -221,6 +228,16 @@ class CustomRSocketServer {
       rsocketLogger.info(`RequestStream received: ${rsocketConnectionId.data}`);
 
       this.addUserToChatroom(chatroomId, rsocketConnectionId.data, responderStream);
+    }
+  }
+
+  async handleAIStream(provider, messages, responderStream) {
+    try {
+        const aiInstance = aiFactory.getProvider(provider);
+        await aiInstance.streamChat({ messages }, responderStream);
+    } catch (error) {
+        rsocketLogger.error(`Error in AI stream: ${error.message}`);
+        responderStream.onError(error);
     }
   }
 

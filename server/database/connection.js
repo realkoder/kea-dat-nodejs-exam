@@ -52,6 +52,7 @@ class DatabaseConnection {
 }
 
 const databaseConnection = new DatabaseConnection();
+Object.freeze(databaseConnection);
 
 process.on('SIGINT', () => {
   databaseConnection.disconnect().then(() => {
