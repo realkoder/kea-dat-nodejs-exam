@@ -101,13 +101,23 @@
       return;
     }
     if (rsocket) {
-      rsocket.fireAndForget(`send.message.${$userStore.id}.${chatroomId}`, {
-        data: {
-          userId: $userStore.id,
-          textMessage: textMessage,
-          chatroomId: chatroomId,
-        },
-      });
+      if (textMessage[0] === "@") {
+        const provider = textMessage.split(" ")[0].substring(1);         
+        rsocket.fireAndForget(`ai.stream.${$userStore.id}.${chatroomId}`, {
+          data: {
+            provider: provider,
+            messages: chatMessages,
+          },
+        });
+      } else {
+        rsocket.fireAndForget(`send.message.${$userStore.id}.${chatroomId}`, {
+          data: {
+            userId: $userStore.id,
+            textMessage: textMessage,
+            chatroomId: chatroomId,
+          },
+        });
+      }
     }
   }
 

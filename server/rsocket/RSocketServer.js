@@ -79,10 +79,13 @@ class CustomRSocketServer {
                   break;
 
                 case routingMetadata.substring(1).startsWith('ai.stream.'):
-                  const { provider, messages } = JSON.parse(payload.data.toString());
-                  await this.handleAIStream(provider, messages, payload.responderStream);
+                  chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
+                  console.log(JSON.parse(payload.data.toString()));
+                  const payloadData = JSON.parse(payload.data.toString());
+                  const {provider, messages} = payloadData.data;
+                  await this.handleAIStream(chatroomId, provider, messages);
                   break;
-                  
+
                 default:
                   rsocketLogger.error(`No handler for route: ${routingMetadata}`);
                   return this.createEmptyResponse();
@@ -231,13 +234,13 @@ class CustomRSocketServer {
     }
   }
 
-  async handleAIStream(provider, messages, responderStream) {
+  async handleAIStream(chatroomId, provider, messages) {
     try {
-        const aiInstance = aiFactory.getProvider(provider);
-        await aiInstance.streamChat({ messages }, responderStream);
+      const aiInstance = aiFactory.getProvider(provider);
+      await aiInstance.streamChat(messages, this.connectionsToChatroomsMap.get(chatroomId));
     } catch (error) {
-        rsocketLogger.error(`Error in AI stream: ${error.message}`);
-        responderStream.onError(error);
+      rsocketLogger.error(`Error in AI stream: ${error.message}`);
+      // responderStream.onError(error);
     }
   }
 
