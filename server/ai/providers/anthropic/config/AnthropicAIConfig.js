@@ -2,7 +2,7 @@
 import 'dotenv/config';
 import Anthropic from '@anthropic-ai/sdk';
 import AIProviderInterface from '../../../interfaces/AIInterfaceProvider.js';
-import { getSystemMessage } from '../../../utils/aiUtilityMethods.js';
+import { getSystemMessage, transformMessageFromAIToClient } from '../../../utils/aiUtilityMethods.js';
 
 
 const { ANTHROPIC_API } = process.env;
@@ -21,7 +21,9 @@ class AnthropicAIProvider extends AIProviderInterface {
     }
 
     async streamChat(messages, chatroomConnections) {
-        await this.anthropicAi.messages.stream({
+        let aiAnswer = '';
+        
+        this.anthropicAi.messages.stream({
             max_tokens: 4096,
             model: 'claude-3-opus-20240229',
             system: getSystemMessage(),
@@ -29,11 +31,15 @@ class AnthropicAIProvider extends AIProviderInterface {
             stream: true,
             temperature: 0.6,
         }).on('text', (text) => {
-            console.log(text)
+            aiAnswer += text,
+
             chatroomConnections.forEach(userConnection => {
-                userConnection.connection.onNext({ data: Buffer.from(text) });
+                const buffer = Buffer.from(JSON.stringify({ data: transformMessageFromAIToClient('3', chunk, messages[0].chatroomId) }));      
+                userConnection.connection.onNext({ data: buffer });
             });
         });
+
+        return transformMessageFromAIToClient('3', aiAnswer, messages[0].chatroomId);
 
     }
 
@@ -43,7 +49,7 @@ class AnthropicAIProvider extends AIProviderInterface {
         let userMessageBuffer = '';
     
         chatMessages.forEach(message => {
-            if (message.userId !== 3) {
+            if (message.userId !== '3') {
                 userMessageBuffer += `[userId: ${message.userId} | message: ${message.textMessage}] \n`;
             } else {
                 if (userMessageBuffer) {
