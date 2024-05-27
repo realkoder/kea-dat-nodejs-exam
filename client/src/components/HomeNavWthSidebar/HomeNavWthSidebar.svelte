@@ -1,15 +1,11 @@
 <script>
   import IntelliOptimaLogo from '../../assets/images/IntelliOptima_Logo.svg';
   import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-  import Bot from 'lucide-svelte/icons/bot';
   import { Button } from '$lib/components/ui/button/index.js';
-  import SquareTerminal from 'lucide-svelte/icons/square-terminal';
-  import CodeXML from 'lucide-svelte/icons/code-xml';
-  import Settings2 from 'lucide-svelte/icons/settings-2';
-  import Book from 'lucide-svelte/icons/book';
   import LifeBuoy from 'lucide-svelte/icons/life-buoy';
   import SquareUser from 'lucide-svelte/icons/square-user';
   import { navigate } from 'svelte-routing';
+  import chatroomStore from '../../stores/chatroomStore';
 </script>
 
 <aside class="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
@@ -24,78 +20,26 @@
     </Button>
   </div>
   <nav class="grid gap-1 p-2">
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild let:builder>
-        <Button
-          variant="ghost"
-          size="icon"
-          class="rounded-lg bg-muted"
-          aria-label="Playground"
-          builders={[builder]}
+    {#each $chatroomStore as chatroom, i (i)}
+      <div class="flex items-center justify-start p-2">
+        <div
+          class="mx-2 h-6 w-6 rounded-full"
+          style="background-color: #{chatroom.color};"
         >
-          <SquareTerminal class="size-5" />
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content side="right" sideOffset={5}>Playground</Tooltip.Content>
-    </Tooltip.Root>
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild let:builder>
-        <Button
-          variant="ghost"
-          size="icon"
-          class="rounded-lg"
-          aria-label="Models"
-          builders={[builder]}
+          <button
+            class="mx-2 h-6 w-6 rounded-full focus:outline-none"
+            style="background-color: {chatroom.color};"
+            on:click={() => {
+              navigate(`/chat/${chatroom._id}`);
+            }}
+          ></button>
+        </div>
+        <span
+          class="mx-2 min-w-[3rem] rounded bg-gray-200 px-2 text-sm font-semibold text-gray-800"
+          >{chatroom.chatroomName.substring(0, 5)}</span
         >
-          <Bot class="size-5" />
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content side="right" sideOffset={5}>AI Models</Tooltip.Content>
-    </Tooltip.Root>
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild let:builder>
-        <Button
-          variant="ghost"
-          size="icon"
-          class="rounded-lg"
-          aria-label="API"
-          builders={[builder]}
-        >
-          <CodeXML class="size-5" />
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content side="right" sideOffset={5}>API</Tooltip.Content>
-    </Tooltip.Root>
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild let:builder>
-        <Button
-          variant="ghost"
-          size="icon"
-          class="rounded-lg"
-          aria-label="Documentation"
-          builders={[builder]}
-        >
-          <Book class="size-5" />
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content side="right" sideOffset={5}
-        >Documentation</Tooltip.Content
-      >
-    </Tooltip.Root>
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild let:builder>
-        <Button
-          variant="ghost"
-          size="icon"
-          class="rounded-lg"
-          aria-label="Settings"
-          builders={[builder]}
-        >
-          <Settings2 class="size-5" />
-        </Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content side="right" sideOffset={5}>Settings</Tooltip.Content>
-    </Tooltip.Root>
+      </div>
+    {/each}
   </nav>
 
   <nav class="mt-auto grid gap-1 p-2">

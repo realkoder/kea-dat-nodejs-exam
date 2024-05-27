@@ -19,8 +19,7 @@
           body: { verificationCode, username },
           headers: '',
         })
-        .then((response) => {
-          console.log(response);
+        .then((response) => {          
           if (response.message === 'Verification successfull') {
             toast.success('You are now verified!');
             userStore.update((user) => ({

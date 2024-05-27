@@ -80,7 +80,6 @@ class CustomRSocketServer {
 
                 case routingMetadata.substring(1).startsWith('ai.stream.'):
                   chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
-                  console.log(JSON.parse(payload.data.toString()));
                   const payloadData = JSON.parse(payload.data.toString());
                   const { provider, messages } = payloadData.data;
                   await this.handleAIStream(chatroomId, provider, messages);
@@ -235,7 +234,6 @@ class CustomRSocketServer {
   }
 
   async handleAIStream(chatroomId, provider, payload) {
-    console.log(payload);
     const newMessage = await messageService.createNewMessage(payload[payload.length - 1]);
     const buffer = Buffer.from(JSON.stringify({ data: newMessage }));
     this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
@@ -245,9 +243,9 @@ class CustomRSocketServer {
       try {
         const aiInstance = aiFactory.getProvider(provider);
         const aiAnswer = await aiInstance.streamChat(payload, this.connectionsToChatroomsMap.get(chatroomId));
-        console.log("LOOK",aiAnswer)
+
+        // Important that messageService will get aiMessage without _id param
         if (aiAnswer._id) {
-          console.log("REMOVED _ID FROM AIANSWER");
           delete aiAnswer._id;
         }
         await messageService.createNewMessage(aiAnswer);
@@ -278,7 +276,7 @@ class CustomRSocketServer {
         this.connectionsToChatroomsMap.get(chatroomId).filter(user => user.rsocketConnectionId != rsocketConnectionId),
       );
       rsocketLogger.info('Deleted user from connectionsToChatroomsMap');
-      if (this.connectionsToChatroomsMap.get(chatroomId).size === 0) {
+      if (this.connectionsToChatroomsMap.get(chatroomId).length === 0) {
         this.connectionsToChatroomsMap.delete(chatroomId);
         rsocketLogger.info('Deleted connection map from connectionsToChatroomsMap');
       }

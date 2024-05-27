@@ -8,62 +8,26 @@
 
   // UTIL / SVELTE
   import genericApi from '../../utils/api/genericApi.js';
-  import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
 
   // STORE
   import { BASE_URL } from '../../stores/generalStore.js';
-  import userStore from '../../stores/userStore.js';
+  import chatroomStore from '../../stores/chatroomStore';
 
   // TIME
   import dayjs from 'dayjs';
   import relativeTime from 'dayjs/plugin/relativeTime';
 
-  let chatrooms = [];
-
-  onMount(() => {
-    genericApi
-      .GET(`${$BASE_URL}/api/v1/chatrooms/userId/${$userStore.id}`)
-      .then((response) => {
-        if (response) {
-          return response.json();
-        }
-        throw new Error('No response received');
-      })
-      .then((fetchedData) => {
-        chatrooms = sortChatroomByLatestMessageOrCreatedData(fetchedData);
-      })
-      .catch((error) => console.error(error));
-  });
-
-  function sortChatroomByLatestMessageOrCreatedData(data) {
-    return data.chatrooms.sort((a, b) => {
-      const getDate = (chatroom) => {
-        if (chatroom.messages.length > 0) {
-          return new Date(
-            chatroom.messages[chatroom.messages.length - 1].createdAt,
-          );
-        } else {
-          return new Date(chatroom.createdAt);
-        }
-      };
-      const dateA = getDate(a);
-      const dateB = getDate(b);
-      return dateB.getTime() - dateA.getTime();
-    });
-  }
-
   function handleDeleteChatroom(chatroomId) {
     genericApi
       .DELETE(`${$BASE_URL}/api/v1/chatrooms/${chatroomId}`)
-      .then((response) => {
-        
-      })
-      .then((fetchedData) => {
-        chatrooms = chatrooms.filter((cur) => cur._id !== chatroomId);
+      .then(() => {
+        chatroomStore.set(
+          $chatroomStore.filter((cur) => cur._id !== chatroomId),
+        );
         toast.success('Chatroom deleted!');
       })
-      .catch((error) =>
+      .catch(() =>
         toast.error(
           'Deleting new chatroom failed, please check your connection and try again.',
         ),
@@ -79,7 +43,7 @@
   }
 </script>
 
-<div class="flex flex-col items-center h-[80dvh]">
+<div class="flex h-[80dvh] flex-col items-center">
   <h1 class="mb-8">A list of your selected chatroom members.</h1>
   <Table.Root>
     <Table.Header>
@@ -93,9 +57,11 @@
       </Table.Row>
     </Table.Header>
     <Table.Body>
-      {#each chatrooms as chatroom, i (i)}
+      {#each $chatroomStore as chatroom, i (i)}
         <Table.Row>
-          <Table.Cell class={'cursor-pointer font-medium'}
+          <Table.Cell
+            class={'cursor-pointer font-medium'}
+            on:click={() => navigate(`/chat/${chatroom._id}`)}
             >{chatroom.chatroomName}</Table.Cell
           >
           <Table.Cell

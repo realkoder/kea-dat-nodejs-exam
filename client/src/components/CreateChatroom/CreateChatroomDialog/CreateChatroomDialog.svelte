@@ -1,20 +1,29 @@
 <script>
+  // SHADCN
   import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
   import { Separator } from '$lib/components/ui/separator/index.js';
   import * as Dialog from '$lib/components/ui/dialog/index.js';
   import { Input } from '$lib/components/ui/input/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
+  import { toast } from 'svelte-sonner';
+
+  // COMPONENTS
   import SelectedChatroomMembersTable from '../SelectedChatroomMembersTable/SelectedChatroomMembersTable.svelte';
   import UsersSelector from '../UsersSelector/UsersSelector.svelte';
-  import { onMount } from 'svelte';
+
+  // UTIL / SVELTE
   import genericApi from '../../../utils/api/genericApi.js';
-  import { BASE_URL } from '../../../stores/generalStore.js';
-  import { toast } from 'svelte-sonner';
-  import userStore from '../../../stores/userStore';
+  import { onMount } from 'svelte';
   import { navigate } from 'svelte-routing';
+
+  // STORES
+  import { BASE_URL } from '../../../stores/generalStore.js';
+  import userStore from '../../../stores/userStore';
+  import { fetchChatrooms } from '../../../stores/chatroomStore';
 
   let chatroomName = '';
   let chatroomMembers = [];
+  let isCreatingChatroom = false;
 
   let users = [];
 
@@ -28,12 +37,17 @@
   });
 
   function handleCreateNewChatroom() {
+    if (isCreatingChatroom) {
+      toast.error('Chatroom is under consruction!');
+      return;
+    }
     try {
+      isCreatingChatroom = true;
       const newChatroom = {
         chatroomName: chatroomName,
         chatroomUserCreatorId: $userStore.id,
         members: chatroomMembers,
-        color: '000',
+        color: getRandomHexColor(),
       };
       genericApi
         .POST(`${$BASE_URL}/api/v1/chatrooms/`, {
@@ -44,7 +58,9 @@
           if (response.message === 'Successfully created new chatroom') {
             toast.success('New chatroom created!');
             localStorage.setItem('latestChatroomId', response.chatroom._id);
+            fetchChatrooms();
             setTimeout(() => {
+              isCreatingChatroom = false;
               navigate(`/chat/${response.chatroom._id}`);
             }, 1000);
           } else {
@@ -72,6 +88,11 @@
       (cur) => cur.email !== member.email,
     );
     users = [...users, member];
+  }
+
+  function getRandomHexColor() {
+    const randomColor = Math.floor(Math.random() * 16777215);    
+    return `#${randomColor.toString(16).padStart(6, '0')}`;
   }
 </script>
 

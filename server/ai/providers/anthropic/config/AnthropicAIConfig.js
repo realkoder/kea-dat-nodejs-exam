@@ -72,8 +72,7 @@ class AnthropicAIProvider extends AIProviderInterface {
       };
   }
 
-  setMessagesRole(chatMessages) {
-    console.log('chatMessages', chatMessages);
+  setMessagesRole(chatMessages) {    
     const formattedMessages = [];
     let userMessageBuffer = '';
 
@@ -93,8 +92,7 @@ class AnthropicAIProvider extends AIProviderInterface {
     if (userMessageBuffer) {
       formattedMessages.push({ role: 'user', content: userMessageBuffer.trim() });
     }
-
-    console.log('formattedMessages', formattedMessages);
+    
     return formattedMessages;
   }
 }

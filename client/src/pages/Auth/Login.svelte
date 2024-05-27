@@ -1,4 +1,5 @@
 <script lang="js">
+  // SHAD-CN
   import { navigate } from 'svelte-routing';
   import { toast } from 'svelte-sonner';
   import * as Tabs from '$lib/components/ui/tabs/index.js';
@@ -16,6 +17,7 @@
   import { BASE_URL } from '../../stores/generalStore.js';
   import genericApi from '../../utils/api/genericApi.js';
   import userStore from '../../stores/userStore';
+  import { fetchChatrooms } from '../../stores/chatroomStore';
 
   let name = '';
   let email = '';
@@ -38,13 +40,15 @@
           body: loginInputs,
           headers: '',
         })
-        .then((response) => {
-          console.log(response);
+        .then((response) => {          
           if (response.message === 'Login successfull') {
             toast.success('Login successful!');
             userStore.update((user) => ({
               ...response.user,
             }));
+
+            fetchChatrooms();
+
             setTimeout(() => {
               navigate('/home');
             }, 1000);
@@ -275,7 +279,7 @@
       </Tabs.Root>
     </div>
   </div>
-  <div class="hidden bg-muted lg:block">
+  <div class="bg-muted hidden lg:block">
     <img
       src={entryImage}
       alt="placeholder"

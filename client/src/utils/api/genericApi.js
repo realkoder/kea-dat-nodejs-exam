@@ -15,7 +15,10 @@ function GET(url) {
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
       return response;
     })
-    .catch((error) => handleFetchError(error));
+    .catch((error) => {
+      handleFetchError(error);
+      throw error;
+    });
 }
 
 function POST(url, { body, headers }) {

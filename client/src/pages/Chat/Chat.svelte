@@ -21,10 +21,30 @@
   import { v4 as uuidv4 } from 'uuid';
 
   export let chatroomId;
+  let connectedChatroomid;
   let chatroom;
   let rsocket;
   let rsocketConnectionId = uuidv4();
   let chatMessages = [];
+
+  // Reactive statement to handle chatroomId changes
+  $: if (chatroomId) {    
+    if (rsocket && chatroomId !== connectedChatroomid) {
+      closeConnection(connectedChatroomid, false);
+
+      connectedChatroomid = chatroomId;
+
+      fetchChatroom();
+      (async () => {
+        rsocket.requestStream(
+          `chatroom.stream.${$userStore.id}.${chatroomId}`,
+          { data: rsocketConnectionId },
+          appendChatMessages,
+          removeChatMessage,
+        );
+      })();
+    }
+  }
 
   // INITIALIZING VIEW - SETTING RSOCKET AND CHECKING CHATROOMID
   onMount(async () => {
@@ -42,6 +62,7 @@
     }
 
     if (chatroomId) {
+      connectedChatroomid = chatroomId;
       fetchChatroom();
       rsocket = await CustomRSocket.CreateAsync();
       rsocket.requestStream(
@@ -53,30 +74,14 @@
 
       // CLEANUP IF RELOADING
       window.addEventListener('beforeunload', function (event) {
-        if (rsocket) {
-          rsocket.fireAndForgetCloseConnection(
-            `close.message.${$userStore.id}.${chatroomId}`,
-            {
-              data: rsocketConnectionId,
-            },
-          );
-          rsocket.close();
-        }
+        closeConnection(chatroomId);
       });
     }
   });
 
   // CLEANUP WHEN LEAVING PAGE
   onDestroy(() => {
-    if (rsocket) {
-      rsocket.fireAndForgetCloseConnection(
-        `close.message.${$userStore.id}.${chatroomId}`,
-        {
-          data: rsocketConnectionId,
-        },
-      );
-      rsocket.close();
-    }
+    closeConnection(chatroomId);
   });
 
   function fetchChatroom() {
@@ -100,7 +105,7 @@
       toast.error('Not possible to send empty message');
       return;
     }
-    if (rsocket) {      
+    if (rsocket) {
       if (textMessage.startsWith('@')) {
         const provider = textMessage.split(' ')[0].substring(1);
         const formattedMessages = [
@@ -121,14 +126,7 @@
             provider: provider,
             messages: formattedMessages,
           },
-        });
-
-        console.log({
-          data: {
-            provider: provider,
-            messages: formattedMessages,
-          },
-        });
+        });        
       } else {
         rsocket.fireAndForget(`send.message.${$userStore.id}.${chatroomId}`, {
           data: {
@@ -180,6 +178,18 @@
     chatMessages = Array.from(uniqueMessagesSet).map((id) =>
       combinedMessages.find((message) => message._id === id),
     );
+  }
+
+  function closeConnection(chatroomId, closeRSocket = true) {
+    if (rsocket) {
+      rsocket.fireAndForgetCloseConnection(
+        `close.message.${$userStore.id}.${chatroomId}`,
+        {
+          data: rsocketConnectionId,
+        },
+      );
+      if (closeRSocket) rsocket.close();
+    }
   }
 </script>
 

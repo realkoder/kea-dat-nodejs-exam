@@ -1,25 +1,27 @@
 <script>
-  import { Router, Route } from 'svelte-routing';
-  import { onMount } from 'svelte';
+  import { Router, Route } from 'svelte-routing';  
   import { ModeWatcher } from 'mode-watcher';
   import { Toaster } from '$lib/components/ui/sonner';
 
   import { Buffer } from 'buffer';
   globalThis.Buffer = Buffer;
 
-  // Store
+  // STORE
   import isAuthenticated, { setAuthenticatedStatus } from './stores/authStore';
   import { BASE_URL } from './stores/generalStore';
+  import { fetchChatrooms } from './stores/chatroomStore';
 
-  // Utils
+  // SVELTE / UTILS
+  import { onMount } from 'svelte';
   import { verifyAuth, redirectToLogin } from './utils/api/auth';
 
-  // Pages
+
+  // PAGES
   import Home from './pages/Home/Home.svelte';
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
   import Chat from './pages/Chat/Chat.svelte';
-  import Verification from './pages/Verification/Verification.svelte';
+  import Verification from './pages/Verification/Verification.svelte';      
 
   export let url = '';
 
@@ -44,6 +46,7 @@
       } else {
         console.log('Setting authenticated status to true.');
         setAuthenticatedStatus(true);
+        fetchChatrooms();
       }
     }
   });

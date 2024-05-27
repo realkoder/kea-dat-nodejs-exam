@@ -4,7 +4,6 @@
   import profileImage from '../../../assets/images/profile-pic.svg';
   import userImage from '../../../assets/images/user-pic.svg';
 
-
   // export let profileImage;
   export let currentChatroom;
   export let message;
@@ -18,8 +17,11 @@
         <div
           class="dark:border-n-6 relative aspect-square max-w-[38em] rounded-full border-4 border-white"
         >
-           <img class="rounded-full object-cover z-1 shadow-xl" src={userImage} alt="" />
-          <p class="z-1 rounded-full object-cover shadow-xl">🐍</p>
+          <img
+            class="z-1 rounded-full object-cover shadow-xl"
+            src={userImage}
+            alt=""
+          />
         </div>
       </div>
     </div>
@@ -67,7 +69,11 @@
         <div
           class="dark:border-n-6 relative aspect-square max-w-[38em] rounded-full border-4 border-white"
         >
-          <img class="rounded-full object-cover z-1 shadow-xl" src={profileImage} alt="" />
+          <img
+            class="z-1 rounded-full object-cover shadow-xl"
+            src={profileImage}
+            alt=""
+          />
         </div>
       </div>
     </div>
