@@ -101,14 +101,37 @@
       return;
     }
     if (rsocket) {
-      if (textMessage[0] === "@") {
+      console.log("Text Message", textMessage)
+      if (textMessage.startsWith('@')) {
         const provider = textMessage.split(" ")[0].substring(1);         
+        const formattedMessages = [
+          ...chatMessages.map(message => ({
+              userId: message.userId,
+              textMessage: message.textMessage,
+              chatroomId: message.chatroomId,
+          })),
+          {
+              userId: $userStore.id,
+              textMessage: textMessage,
+              chatroomId: chatroomId,
+          }
+
+        ];
+
         rsocket.fireAndForget(`ai.stream.${$userStore.id}.${chatroomId}`, {
-          data: {
-            provider: provider,
-            messages: chatMessages,
-          },
+            data: {
+                provider: provider,
+                messages: formattedMessages
+            }
         });
+
+        console.log({
+          data: {
+                provider: provider,
+                messages: formattedMessages
+            }
+        });
+
       } else {
         rsocket.fireAndForget(`send.message.${$userStore.id}.${chatroomId}`, {
           data: {

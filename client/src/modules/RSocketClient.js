@@ -109,6 +109,7 @@ class CustomRSocket {
             reject(error);
           },
           onNext: async (payload, isComplete) => {
+            console.log(payload.data.toString())
             const data = payload.data
               ? { ...JSON.parse(payload.data).data }
               : undefined;

@@ -234,14 +234,23 @@ class CustomRSocketServer {
     }
   }
 
-  async handleAIStream(chatroomId, provider, messages) {
-    try {
-      const aiInstance = aiFactory.getProvider(provider);
-      await aiInstance.streamChat(messages, this.connectionsToChatroomsMap.get(chatroomId));
-    } catch (error) {
-      rsocketLogger.error(`Error in AI stream: ${error.message}`);
-      // responderStream.onError(error);
-    }
+  async handleAIStream(chatroomId, provider, payload) {
+    console.log(payload);
+    const newMessage = await messageService.createNewMessage(payload[payload.length - 1]);
+    const buffer = Buffer.from(JSON.stringify({ data: newMessage }));
+    this.connectionsToChatroomsMap.get(chatroomId).forEach(userConnection => {
+      userConnection.connection.onNext({ data: buffer });
+    });
+    setTimeout(async () => {
+      try {
+        const aiInstance = aiFactory.getProvider(provider);
+        const aiAnswer = await aiInstance.streamChat(payload, this.connectionsToChatroomsMap.get(chatroomId));
+        await messageService.createNewMessage(aiAnswer);
+      } catch (error) {
+        rsocketLogger.error(`Error in AI stream: ${error.message}`);
+        // responderStream.onError(error);
+      }
+    }, 1000);
   }
 
   getConnectionByChatroomId(userId) {
