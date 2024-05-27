@@ -20,7 +20,7 @@ class OpenAIProvider extends AIProviderInterface {
     OpenAIProvider.instance = this;
   }
 
-  getOpenAI() {
+  getOpenAIProvider() {
     return this.openai;
   }
 

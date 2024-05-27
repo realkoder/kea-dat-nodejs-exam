@@ -20,9 +20,13 @@ class AnthropicAIProvider extends AIProviderInterface {
         AnthropicAIProvider.instance = this;
     }
 
+    getAnthropicProvider() {
+        return this.anthropicAi;
+    }
+
     async streamChat(messages, chatroomConnections) {
         let aiAnswer = '';
-        
+
         this.anthropicAi.messages.stream({
             max_tokens: 4096,
             model: 'claude-3-opus-20240229',
