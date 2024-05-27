@@ -7,7 +7,6 @@ import {
 import AIProviderInterface from '../../../interfaces/AIInterfaceProvider.js';
 import { getSystemMessage } from '../../../utils/aiUtilityMethods.js';
 
-
 const { PROJECT_ID, LOCATION } = process.env;
 
 const project = PROJECT_ID;

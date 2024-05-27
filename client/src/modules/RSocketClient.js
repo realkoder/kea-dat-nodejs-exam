@@ -108,8 +108,7 @@ class CustomRSocket {
             console.error('Error in chatroom stream connection', error);
             reject(error);
           },
-          onNext: async (payload, isComplete) => {
-            console.log(payload.data.toString())
+          onNext: async (payload, isComplete) => {            
             const data = payload.data
               ? { ...JSON.parse(payload.data).data }
               : undefined;

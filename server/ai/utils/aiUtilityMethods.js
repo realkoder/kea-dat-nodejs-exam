@@ -11,8 +11,9 @@ export function getSystemMessage() {
     All your responses must adhere to high ethical standards, promoting positive and respectful interactions. Avoid generating content that could be harmful, offensive, or inappropriate.`;
 }
 
-export function transformMessageFromAIToClient(aiId, chunk, chatroomId) {
+export function transformMessageFromAIToClient(aiId, temporayMsgId, chunk, chatroomId) {    
     return {
+        _id: temporayMsgId,
         userId: aiId,
         textMessage: chunk.choices[0]?.delta?.content || '',
         chatroomId: chatroomId,

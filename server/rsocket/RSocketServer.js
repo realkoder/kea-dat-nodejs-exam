@@ -82,7 +82,7 @@ class CustomRSocketServer {
                   chatroomId = this.getIdsMessageRouting(routingMetadata).chatroomId;
                   console.log(JSON.parse(payload.data.toString()));
                   const payloadData = JSON.parse(payload.data.toString());
-                  const {provider, messages} = payloadData.data;
+                  const { provider, messages } = payloadData.data;
                   await this.handleAIStream(chatroomId, provider, messages);
                   break;
 
@@ -245,6 +245,11 @@ class CustomRSocketServer {
       try {
         const aiInstance = aiFactory.getProvider(provider);
         const aiAnswer = await aiInstance.streamChat(payload, this.connectionsToChatroomsMap.get(chatroomId));
+        console.log("LOOK",aiAnswer)
+        if (aiAnswer._id) {
+          console.log("REMOVED _ID FROM AIANSWER");
+          delete aiAnswer._id;
+        }
         await messageService.createNewMessage(aiAnswer);
       } catch (error) {
         rsocketLogger.error(`Error in AI stream: ${error.message}`);

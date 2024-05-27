@@ -100,38 +100,35 @@
       toast.error('Not possible to send empty message');
       return;
     }
-    if (rsocket) {
-      console.log("Text Message", textMessage)
+    if (rsocket) {      
       if (textMessage.startsWith('@')) {
-        const provider = textMessage.split(" ")[0].substring(1);         
+        const provider = textMessage.split(' ')[0].substring(1);
         const formattedMessages = [
-          ...chatMessages.map(message => ({
-              userId: message.userId,
-              textMessage: message.textMessage,
-              chatroomId: message.chatroomId,
+          ...chatMessages.map((message) => ({
+            userId: message.userId,
+            textMessage: message.textMessage,
+            chatroomId: message.chatroomId,
           })),
           {
-              userId: $userStore.id,
-              textMessage: textMessage,
-              chatroomId: chatroomId,
-          }
-
+            userId: $userStore.id,
+            textMessage: textMessage,
+            chatroomId: chatroomId,
+          },
         ];
 
         rsocket.fireAndForget(`ai.stream.${$userStore.id}.${chatroomId}`, {
-            data: {
-                provider: provider,
-                messages: formattedMessages
-            }
+          data: {
+            provider: provider,
+            messages: formattedMessages,
+          },
         });
 
         console.log({
           data: {
-                provider: provider,
-                messages: formattedMessages
-            }
+            provider: provider,
+            messages: formattedMessages,
+          },
         });
-
       } else {
         rsocket.fireAndForget(`send.message.${$userStore.id}.${chatroomId}`, {
           data: {
@@ -155,7 +152,16 @@
   }
 
   function appendChatMessages(chatMessage) {
-    chatMessages = [...chatMessages, chatMessage];
+    const possibleStreamedMessageResponse = chatMessages.find(
+      (message) => message._id === chatMessage._id,
+    );
+    // If userId length < 2 messages will be streamed as AI chunks
+    if (chatMessage.userId.length < 2 && possibleStreamedMessageResponse) {
+      possibleStreamedMessageResponse.textMessage += chatMessage.textMessage;
+      chatMessages = [...chatMessages];
+    } else {
+      chatMessages = [...chatMessages, chatMessage];
+    }
   }
 
   function removeChatMessage(deleteMessageId) {
