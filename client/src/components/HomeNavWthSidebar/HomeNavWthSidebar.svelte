@@ -1,11 +1,19 @@
 <script>
-  import IntelliOptimaLogo from '../../assets/images/IntelliOptima_Logo.svg';
+  // SHADCN
   import * as Tooltip from '$lib/components/ui/tooltip/index.js';
   import { Button } from '$lib/components/ui/button/index.js';
+
+  // LUCIDE ICONS
   import LifeBuoy from 'lucide-svelte/icons/life-buoy';
   import SquareUser from 'lucide-svelte/icons/square-user';
+
+  // SVELTE
   import { navigate } from 'svelte-routing';
+
+  // STORE
   import chatroomStore from '../../stores/chatroomStore';
+
+  import IntelliOptimaLogo from '../../assets/images/IntelliOptima_Logo.svg';
 </script>
 
 <aside class="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
@@ -27,7 +35,7 @@
           style="background-color: #{chatroom.color};"
         >
           <button
-            class="mx-2 h-6 w-6 rounded-full focus:outline-none"
+            class="mx-2 h-6 w-6 rounded-full"
             style="background-color: {chatroom.color};"
             on:click={() => {
               navigate(`/chat/${chatroom._id}`);
@@ -36,7 +44,9 @@
         </div>
         <span
           class="mx-2 min-w-[3rem] rounded bg-gray-200 px-2 text-sm font-semibold text-gray-800"
-          >{chatroom.chatroomName.substring(0, 5)}</span
+          >{chatroom.chatroomName.length >= 5
+            ? `${chatroom.chatroomName.substring(0, 5)}...`
+            : chatroom.chatroomName}</span
         >
       </div>
     {/each}

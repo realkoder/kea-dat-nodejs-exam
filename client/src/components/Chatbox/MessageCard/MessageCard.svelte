@@ -48,14 +48,21 @@
       </p>
 
       <div
-        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 flex max-w-[90%] items-center overflow-auto whitespace-pre-wrap rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
+        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 max-w-[90%] items-center overflow-auto whitespace-pre-wrap rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
         $userStore.id
           ? 'dark:shadow-n-7 flex-row-reverse pl-3 pr-9 shadow-lg'
           : 'dark:shadow-n-7 pl-9 pr-3 shadow-lg'}"
       >
-        {message.textMessage}
+        <!-- THIS IS MAGIC - but it works for styling the textmessage content nicely -->
+        {@html message.textMessage
+          .replace(/(?:\r\n|\r|\n)/g, '<br>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(
+            /(?:^|\n)(\d+)\.\s(.*?)(?=\n|$)/g,
+            '<div class="mt-2"><span class="font-bold">$1.</span> $2</div>',
+          )
+          .replace(/###\s*(.*?):/g, '<h3>$1:</h3>')}
       </div>
-      <!-- {#if (isHovered || alertDialogIsClicked) && messageUserId === $userStore.id} -->
       <div class="mr-16">
         <MessageHoverCard {message} {deleteMessage} />
       </div>

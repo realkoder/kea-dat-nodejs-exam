@@ -15,8 +15,7 @@ export function fetchChatrooms() {
       throw new Error('No response received');
     })
     .then((fetchedData) => {
-      chatroomStore.set(sortChatroomByLatestMessageOrCreatedData(fetchedData));
-      console.log('LOOK', get(chatroomStore));
+      chatroomStore.set(sortChatroomByLatestMessageOrCreatedData(fetchedData));      
     })
     .catch((error) => console.error(error));
 }

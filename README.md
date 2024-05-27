@@ -31,7 +31,7 @@ The server is structured following the MVC (Model-View-Controller) pattern for e
 ## Client
 [Link to Client README](client/README.md)
 
-The client side of the application is developed using React, a popular front-end library for building user interfaces. It leverages modern JavaScript features and follows best practices for state management using Redux. The client is designed to communicate with the server through RESTful API endpoints for seamless data exchange.
+The client side of the application is developed using Svelte, a popular front-end library for building user interfaces. The client is designed to communicate with the server through RESTful API endpoints for seamless data exchange.
 
 
 ### Tech Stack
@@ -40,15 +40,9 @@ The client side of the application is developed using React, a popular front-end
 - TailwindCSS
 - JavaScript (ES6+)
 
-
-### General Setup
-The client is structured following a modular component-based architecture, allowing for easy maintenance and scalability. It will include state management using Redux, in future iteration for efficient handling of application state and user interactions.
+<br>
 
 ----
-
-## Server-Side Rendering (SSR)
-
-In this application, server-side rendering (SSR) is achieved through Express, where the server serves the client by rendering the initial HTML on the server side and then sending it to the client. This approach improves performance, SEO, and initial page load speed by delivering fully rendered pages to the client.
 
 ### References
 `Svelte-rsocket-demo` -> https://github.com/linux-china/svelte-rsocket-demo/blob/master/README.md

@@ -77,7 +77,11 @@ app.use(httpLogger);
 app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
-// SERVER SIDE RENDERING
+// SERVER SIDE RENDERING -> 
+//                          Initially wanted to ssr, 
+//                          but it gave some issues with weird client bugs, 
+//                          when more tabs for same chatroom was openened
+
 // app.use(express.static(path.resolve('../client/dist')));
 // app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
 
@@ -85,6 +89,7 @@ app.use('/api/v1', ServerRoutes);
 const rSocketServer = new CustomRSocketServer({ app });
 rSocketServer.start();
 
+// RELATES TO SSR
 // if (NODE_ENV === 'development') {
 //   const bs = browserSync.create({ logLevel: 'silent' });
 //   app.listen(PORT || 8080, () => {
