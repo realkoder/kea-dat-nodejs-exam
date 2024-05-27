@@ -48,7 +48,7 @@
       </p>
 
       <div
-        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 flex max-w-[90%] items-center overflow-auto whitespace-pre-wrap break-words break-all rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
+        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 flex max-w-[90%] items-center overflow-auto whitespace-pre-wrap rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
         $userStore.id
           ? 'dark:shadow-n-7 flex-row-reverse pl-3 pr-9 shadow-lg'
           : 'dark:shadow-n-7 pl-9 pr-3 shadow-lg'}"

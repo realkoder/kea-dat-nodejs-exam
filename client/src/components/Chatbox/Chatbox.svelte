@@ -1,33 +1,50 @@
 <script>
+  // COMPONENTS
+  import MessageScrollArea from './MessageScrollArea/MessageScrollArea.svelte';
+
+  // SHADCN
   import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
   import { Textarea } from '$lib/components/ui/textarea/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
   import { Button } from '$lib/components/ui/button/index.js';
-  import MessageScrollArea from './MessageScrollArea/MessageScrollArea.svelte';
+  import * as Select from '$lib/components/ui/select';
 
   export let sendMessage;
   export let deleteMessage;
   export let chatMessages;
   export let chatroom;
   export let appendOlderMessages;
-  let textMessage;
+
+  let textMessage = '';
 
   function handleKeyDown(event) {
     if (event.shiftKey) return;
     if (event.key === 'Enter') {
       sendMessage(textMessage);
 
-      setTimeout(() => (textMessage = ''), 1);
+      setTimeout(() => {
+        textMessage = '';
+      }, 1);
     }
+  }
+
+  function annotateTextMsgWLLM(llm) {
+    if (textMessage.startsWith('@')) {
+      textMessage = textMessage
+        .split(' ')
+        .filter((word) => !word.startsWith('@'))
+        .join(' ');
+    }
+    textMessage = llm + ' ' + textMessage;
   }
 </script>
 
 <div
-  class="relative flex min-h-[80dvh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2"
+  class="bg-muted/50 relative flex min-h-[80dvh] flex-col rounded-xl p-4 lg:col-span-2"
 >
   <div class="flex-1">
     <MessageScrollArea
-      appendOlderMessages={appendOlderMessages}
+      {appendOlderMessages}
       chatMessages={chatMessages.sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
@@ -37,8 +54,27 @@
     />
   </div>
   <form
-    class="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
+    class="bg-background focus-within:ring-ring relative overflow-hidden rounded-lg border focus-within:ring-1"
   >
+    <Select.Root>
+      <Select.Trigger class="w-[180px]">
+        <Select.Value placeholder="Choose LLM to prompt" />
+      </Select.Trigger>
+      <Select.Content>
+        <Select.Item
+          value="gpt"
+          on:click={() => {
+            annotateTextMsgWLLM('@gpt');
+          }}>ChatGPT</Select.Item
+        >
+        <Select.Item
+          value="claude"
+          on:click={() => {
+            annotateTextMsgWLLM('@claude');
+          }}>Claude 3 Haiku</Select.Item
+        >
+      </Select.Content>
+    </Select.Root>
     <Label for="message" class="sr-only">Message</Label>
     <Textarea
       id="message"
@@ -57,7 +93,9 @@
           textMessage = '';
         }}
       >
-        Send Message
+        {textMessage.startsWith('@')
+          ? `Prompt ${textMessage.split(' ')[0].substring(1)}`
+          : 'Send Message'}
         <CornerDownLeft class="size-3.5" />
       </Button>
     </div>
