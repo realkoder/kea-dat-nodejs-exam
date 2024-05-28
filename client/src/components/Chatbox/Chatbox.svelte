@@ -16,6 +16,7 @@
   export let appendOlderMessages;
 
   let textMessage = '';
+  let textareaRef;
 
   function handleKeyDown(event) {
     if (event.shiftKey) return;
@@ -36,6 +37,7 @@
         .join(' ');
     }
     textMessage = llm + ' ' + textMessage;
+    textareaRef.focus();
   }
 </script>
 
@@ -77,6 +79,7 @@
     </Select.Root>
     <Label for="message" class="sr-only">Message</Label>
     <Textarea
+      bind:textareaRef
       id="message"
       placeholder="Type your message here..."
       class="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
