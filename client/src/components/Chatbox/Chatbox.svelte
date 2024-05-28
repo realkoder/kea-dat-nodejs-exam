@@ -8,6 +8,7 @@
   import { Label } from '$lib/components/ui/label/index.js';
   import { Button } from '$lib/components/ui/button/index.js';
   import * as Select from '$lib/components/ui/select';
+  import { onMount } from 'svelte';
 
   export let sendMessage;
   export let deleteMessage;
@@ -17,6 +18,10 @@
 
   let textMessage = '';
   let textareaRef;
+
+  onMount(() => {
+    textareaRef.focus();
+  });
 
   function handleKeyDown(event) {
     if (event.shiftKey) return;
