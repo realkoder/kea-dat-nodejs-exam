@@ -78,7 +78,7 @@
           value="claude"
           on:click={() => {
             annotateTextMsgWLLM('@claude');
-          }}>Claude 3 Haiku</Select.Item
+          }}>Claude 3 Opus</Select.Item
         >
       </Select.Content>
     </Select.Root>

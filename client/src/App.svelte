@@ -34,17 +34,12 @@
     ) {
       const isAuthenticated = await verifyAuth(
         `${$BASE_URL}/api/v1/auth/verifyAuth`,
-      );
-      console.log('Authentication Status:', isAuthenticated);
+      );      
 
-      if (!isAuthenticated) {
-        console.log(
-          'Redirecting to login because authentication status is false.',
-        );
+      if (!isAuthenticated) {      
         setAuthenticatedStatus(false);
         redirectToLogin();
-      } else {
-        console.log('Setting authenticated status to true.');
+      } else {        
         setAuthenticatedStatus(true);
         fetchChatrooms();
       }
