@@ -38,8 +38,7 @@
           toast.error('Something went wrong, please try again!');
           console.error('Error during verification: ', error);
         });
-    } else {
-      console.log('value on click', verificationCode);
+    } else {      
       toast.error(
         'Verification failed, please check your credentials and try again.',
       );
