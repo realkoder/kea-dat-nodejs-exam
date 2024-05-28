@@ -48,7 +48,6 @@ class VertexAIProvider extends AIProviderInterface {
     }
 
     setMessagesRole(chatMessages) {
-        console.log('chatMessages', chatMessages);
         const formattedMessages = [];
         let userMessageBuffer = '';
     
@@ -68,8 +67,7 @@ class VertexAIProvider extends AIProviderInterface {
         if (userMessageBuffer) {
             formattedMessages.push({ role: 'user', parts: [{text: userMessageBuffer.trim()}] });
         }
-    
-        console.log('formattedMessages', formattedMessages);
+            
         return formattedMessages;
     }
     

@@ -9,7 +9,8 @@
     "build:watch": "vite build --watch",
     "preview": "vite preview",
     "lint": "npx eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "start": "node app.js"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
