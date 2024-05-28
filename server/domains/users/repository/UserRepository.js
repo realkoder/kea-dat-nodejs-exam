@@ -3,6 +3,18 @@ import prefixedLogger from '../../../utils/logger.js';
 
 const databaseLogger = prefixedLogger('🍃 [Database]: ');
 
+function get() {
+  return User.find()
+    .then(fetchedUsers => {
+      databaseLogger.info(`Users fetched`);
+      return fetchedUsers;
+    })
+    .catch(error => {
+      databaseLogger.error(`Error fetching users - error: ${error}`);
+      throw error;
+    });
+}
+
 function create(user) {
   return User.create(user)
     .then(createdUser => {
@@ -42,10 +54,15 @@ function updateUserById(userId, user) {
 }
 
 function deleteById(userId) {
-  return User.findByIdAndDelete(userId)
-    .then(() => {
-      databaseLogger.info(`Deleted user with Id: ${userId}`);
-      return true;
+  return User.findByIdAndDelete({_id: userId})
+    .then((result) => {
+      if (result === null) {
+        databaseLogger.info(`No User with Id: ${userId}`);
+        return false;
+      } else {
+        databaseLogger.info(`Deleted user with Id: ${userId}`);
+        return true;
+      }
     })
     .catch(error => {
       databaseLogger.error(`Wasn't able to delete user with id: ${userId} - error: ${error}`);
@@ -54,6 +71,7 @@ function deleteById(userId) {
 }
 
 export default {
+  get,
   create,
   findByEmail,
   updateUserById,

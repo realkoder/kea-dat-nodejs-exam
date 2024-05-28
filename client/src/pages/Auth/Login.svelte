@@ -1,4 +1,5 @@
 <script lang="js">
+  // SHAD-CN
   import { navigate } from 'svelte-routing';
   import { toast } from 'svelte-sonner';
   import * as Tabs from '$lib/components/ui/tabs/index.js';
@@ -15,6 +16,8 @@
 
   import { BASE_URL } from '../../stores/generalStore.js';
   import genericApi from '../../utils/api/genericApi.js';
+  import userStore from '../../stores/userStore';
+  import { fetchChatrooms } from '../../stores/chatroomStore';
 
   let name = '';
   let email = '';
@@ -37,10 +40,15 @@
           body: loginInputs,
           headers: '',
         })
-        .then((response) => {
-          console.log(response);
-          if (response.ok || response.message === 'Login successful') {
+        .then((response) => {          
+          if (response.message === 'Login successfull') {
             toast.success('Login successful!');
+            userStore.update((user) => ({
+              ...response.user,
+            }));
+
+            fetchChatrooms();
+
             setTimeout(() => {
               navigate('/home');
             }, 1000);
@@ -84,16 +92,19 @@
           },
           headers: '',
         })
-        .then(() =>
+        .then(() => {
           toast.success(
-            'New account created, please use new credentials to login',
-          ),
-        )
+            'New account created, please verify your account to login - check your email',
+          );
+          setTimeout(() => {
+            navigate(`/verification/${loginUserInputs.username}`);
+          }, 2000);
+        })
         .catch(() => toast.error('Something went wrong, please try again'));
     } catch (error) {
       validationErrors = error.formErrors.fieldErrors;
       console.error('Validation errors: ', validationErrors);
-      toast.error("Your credentials was not accepted.");
+      toast.error('Your credentials was not accepted.');
     }
   }
 
@@ -135,9 +146,9 @@
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
-                  <Label for="username">Username</Label>
+                  <Label for="login-username">Username</Label>
                   <Input
-                    id="username"
+                    id="login-username"
                     bind:value={username}
                     type="text"
                     placeholder="JonDoe1993"
@@ -145,9 +156,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="password">Password</Label>
+                  <Label for="login-password">Password</Label>
                   <Input
-                    id="password"
+                    id="login-password"
                     bind:value={password}
                     type="password"
                     placeholder="myPassword123"
@@ -172,9 +183,9 @@
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
-                  <Label for="name">Name</Label>
+                  <Label for="signup-name">Name</Label>
                   <Input
-                    id="name"
+                    id="signup-name"
                     bind:value={name}
                     type="text"
                     placeholder="Jon Doe"
@@ -182,9 +193,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="email">Email</Label>
+                  <Label for="signup-email">Email</Label>
                   <Input
-                    id="email"
+                    id="signup-email"
                     bind:value={email}
                     type="email"
                     placeholder="jondoe@hotmail.com"
@@ -192,9 +203,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="username">Username</Label>
+                  <Label for="signup-username">Username</Label>
                   <Input
-                    id="username"
+                    id="signup-username"
                     bind:value={username}
                     type="text"
                     placeholder="JonDoe1993"
@@ -202,9 +213,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="password">Password</Label>
+                  <Label for="signup-password">Password</Label>
                   <Input
-                    id="password"
+                    id="signup-password"
                     bind:value={password}
                     type="password"
                     placeholder="myPassword123"
@@ -212,9 +223,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="secretPhrase">Secret Phrase</Label>
+                  <Label for="signup-secretPhrase">Secret Phrase</Label>
                   <Input
-                    id="secretPhrase"
+                    id="signup-secretPhrase"
                     bind:value={secretPhrase}
                     type="text"
                     placeholder="The Wizard of Oz"
@@ -239,9 +250,9 @@
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
-                  <Label for="username">Username</Label>
+                  <Label for="forgot-username">Username</Label>
                   <Input
-                    id="username"
+                    id="forgot-username"
                     bind:value={username}
                     type="text"
                     placeholder="JonDoe1993"
@@ -249,9 +260,9 @@
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label for="email">Email</Label>
+                  <Label for="forgot-email">Email</Label>
                   <Input
-                    id="email"
+                    id="forgot-email"
                     bind:value={email}
                     type="email"
                     placeholder="jondoe@hotmail.com"
@@ -268,7 +279,7 @@
       </Tabs.Root>
     </div>
   </div>
-  <div class="hidden bg-muted lg:block">
+  <div class="bg-muted hidden lg:block">
     <img
       src={entryImage}
       alt="placeholder"

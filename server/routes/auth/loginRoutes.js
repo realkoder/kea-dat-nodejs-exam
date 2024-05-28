@@ -10,12 +10,17 @@ const router = Router();
 // GET
 router.get('/verifyAuth', authenticateToken, LoginController.isLoggedIn);
 
+// GET
 router.get('/logout', authenticateToken, LoginController.logout);
 
 // POST
 router.post('/', LoginController.createNewUserWithLogin);
 
-router.post('/login', sensitiveLimiter, LoginController.loginWithCredentials);
+// POST
+router.post('/verify', LoginController.verifyLoginAccount);
+
+// router.post('/login', sensitiveLimiter, LoginController.loginWithCredentials);
+router.post('/login', LoginController.loginWithCredentials);
 
 router.post('/forgot-password', sensitiveLimiter, LoginController.sendEmailForPasswordReset);
 

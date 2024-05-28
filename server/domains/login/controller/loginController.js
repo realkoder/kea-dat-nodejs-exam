@@ -39,7 +39,7 @@ const loginWithCredentials = async (req, res, next) => {
     const userLogin = await LoginService.loginWithCredentials(req.body);
     if (!userLogin)
       return res.status(401).send({ message: 'Authentication failed. User not found or password incorrect.' });
-    const jwtUserInfo = { id: userLogin.id, username: userLogin.username };
+    const jwtUserInfo = { id: userLogin.id, username: userLogin.username, isVerified: userLogin.isVerified };
     const tokens = loginMiddleware(jwtUserInfo);
 
     res.cookie('accessToken', tokens.accessToken, {
@@ -54,7 +54,52 @@ const loginWithCredentials = async (req, res, next) => {
     });
 
     return res.status(200).send({
-      message: 'Login successful',
+      message: 'Login successfull',
+      user: { id: userLogin.id, username: userLogin.username },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ *
+ * @param { Request } req
+ * @param { Response } res
+ * @param { NextFunction } next
+ */
+const verifyLoginAccount = async (req, res, next) => {
+  try {
+    const userLogin = await LoginService.getLogin(req.body.username);
+    if (!userLogin) {
+      return res.status(401).send({ message: 'Verification failed. User not found or verification code incorrect.' });
+    }
+
+    if (req.body.verificationCode !== userLogin.verificationCode) {
+      return res.status(401).send({ message: 'Verification failed. User not found or verification code incorrect.' });
+    }
+
+    const verifiedLogin = await LoginService.setIsVerified(userLogin.id);
+    if (!verifiedLogin) {
+      return res.status(401).send({ message: 'Verification failed. User not found or verification code incorrect.' });
+    }
+
+    const jwtUserInfo = { id: userLogin.id, username: userLogin.username, isVerified: verifiedLogin.isVerified };
+    const tokens = loginMiddleware(jwtUserInfo);
+
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure in production
+      maxAge: 15 * 1000, // 15 seconds
+    });
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure in production
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    return res.status(200).send({
+      message: 'Verification successfull',
       user: { id: userLogin.id, username: userLogin.username },
     });
   } catch (error) {
@@ -112,6 +157,7 @@ const logout = async (req, res, next) => {
 export default {
   createNewUserWithLogin,
   loginWithCredentials,
+  verifyLoginAccount,
   resetPasswordForUser,
   sendEmailForPasswordReset,
   isLoggedIn,

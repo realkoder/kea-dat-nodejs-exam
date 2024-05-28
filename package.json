@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run build:watch\""
+        "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\""
     },
     "devDependencies": {
         "concurrently": "^8.2.2"

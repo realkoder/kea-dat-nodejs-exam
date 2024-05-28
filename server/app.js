@@ -25,6 +25,9 @@ import errorHandlerMiddleware from './middlewares/error/errorMiddleware.js';
 // Routes
 import ServerRoutes from './routes/serverRoutes.js';
 
+// RSocket
+import CustomRSocketServer from './rsocket/RSocketServer.js';
+
 const { PORT, SESSION_SECRET, NODE_ENV } = process.env;
 const isDeleteMode = process.argv.includes('delete');
 
@@ -43,7 +46,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: ['http://localhost:8080', 'http://localhost:3000'],
+    origin: true,
     credentials: true,
   }),
 );
@@ -68,36 +71,49 @@ app.use(
     },
   }),
 );
+
 app.use(escapeXSSMiddleware);
 app.use(httpLogger);
 app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
-app.use(express.static(path.resolve('../client/dist')));
-app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
+// SERVER SIDE RENDERING -> 
+//                          Initially wanted to ssr, 
+//                          but it gave some issues with weird client bugs, 
+//                          when more tabs for same chatroom was openened
 
-if (NODE_ENV === 'development') {
-  const bs = browserSync.create({ logLevel: 'silent' });
-  app.listen(PORT || 8080, () => {
-    serverLogger.info(`Express server listening on port: ${PORT || 8080}`);
-    bs.init({
-      proxy: `http://localhost:${PORT || 8080}`,
-      files: ['../client/**/*.*'],
-      ignore: '../client/node_modules/**/*.*',
-      port: 3000,
-      open: false,
-      notify: false,
-      https: false,
-      reloadOnRestart: true,
-      reloadDelay: 2000,
-    });
-    serverLogger.info(`Browser-sync proxying to port: ${PORT || 8080}`);
-  });
-} else {
-  app.listen(PORT || 8080, () => {
-    serverLogger.info(`Listening on port: ${PORT || 8080}`);
-  });
-}
+// app.use(express.static(path.resolve('../client/dist')));
+// app.get('*', (req, res) => res.sendFile(path.resolve('../client/dist/index.html')));
+
+// Instantiate the CustomRSocketServer with app
+const rSocketServer = new CustomRSocketServer({ app });
+rSocketServer.start();
+
+// RELATES TO SSR
+// if (NODE_ENV === 'development') {
+//   const bs = browserSync.create({ logLevel: 'silent' });
+//   app.listen(PORT || 8080, () => {
+//     serverLogger.info(`Express server listening on port: ${PORT || 8080}`);
+//     bs.init({
+//       proxy: `http://localhost:${PORT || 8080}`,
+//       files: ['../client/**/*.*'],
+//       ignore: '../client/node_modules/**/*.*',
+//       port: 3000,
+//       open: false,
+//       notify: false,
+//       https: false,
+//       reloadOnRestart: true,
+//       reloadDelay: 2000,
+//     });
+//     serverLogger.info(`Browser-sync proxying to port: ${PORT || 8080}`);
+//   });
+// } else {
+
+app.listen(PORT || 8080, () => {
+  serverLogger.info(`Listening on port: ${PORT || 8080}`);
+});
+
+// }
 
 (async () => {
   await redisConnection.connect();

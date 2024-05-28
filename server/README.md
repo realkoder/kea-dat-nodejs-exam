@@ -8,7 +8,7 @@ Our server is designed with a focus on modularity and scalability, leveraging th
 
 ### Database Management
 
-We utilize MongoDB Atlas as our database, a highly scalable and flexible NoSQL database that supports a wide range of data models and querying capabilities. To interact with MongoDB, we employ Mongoose, an Object Data Modeling (ODM) library that provides a straightforward, schema-based solution to model our application data. Mongoose simplifies the process of working with MongoDB, offering features such as validation, query building, and middleware support.
+We utilize MongoDB Atlas as our database, a highly scalable and flexible NoSQL database that supports a wide range of data models and querying capabilities. To interact with MongoDB, we employ Mongoose, an Object Document Modeling (ODM) library that provides a straightforward, schema-based solution to model our application data. Mongoose simplifies the process of working with MongoDB, offering features such as validation, query building, and middleware support.
 
 ### Caching and Rate Limiting
 

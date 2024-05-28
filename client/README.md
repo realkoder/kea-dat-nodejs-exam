@@ -27,3 +27,11 @@ To maintain code quality and consistency, we have incorporated the Eslint Svelte
 #### Prettier
 
 In addition to Eslint, we have integrated Prettier to automatically format our code, ensuring a uniform and standardized code style across the project. This not only improves code readability but also reduces the time spent on manual formatting, allowing us to focus on writing high-quality code.
+
+#### LINKS
+
+`Relative Time` -> https://www.npmjs.com/package/relative-time
+
+`Dayjs: ` -> https://www.npmjs.com/package/dayjs
+
+`OTP component: one-time-password` -> https://github.com/shubhadip/svelte-otp?tab=readme-ov-file
