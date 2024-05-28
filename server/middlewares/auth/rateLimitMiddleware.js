@@ -11,7 +11,7 @@ await redisConnection.connect();
 // General API rate limiter
 export const apiLimiter = rateLimit({
   windowMs: parseInt(process.env.API_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.API_MAX) || 100,
+  max: parseInt(process.env.API_MAX) || 200,
   standardHeaders: true,
   legacyHeaders: false,
   store: new RedisStore({

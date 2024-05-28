@@ -39,6 +39,21 @@ function create(login) {
     });
 }
 
+function setIsVerified(loginId) {
+  const filter = { _id: loginId };
+  const update = { isVerified: true };
+
+  return Login.findByIdAndUpdate(filter, update, { new: true })
+    .then(updatedLogin => {
+      databaseLogger.info('Verified login successfully');
+      return updatedLogin;
+    })
+    .catch(error => {
+      databaseLogger.error(`Error verifying login: ${error}`);
+      throw error;
+    });
+}
+
 function updateLogin(userId, newPassword) {
   const filter = { _id: userId };
   const update = { password: newPassword };
@@ -58,5 +73,6 @@ export default {
   create,
   findByUsername,
   findUserById,
+  setIsVerified,
   updateLogin,
 };

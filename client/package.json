@@ -26,12 +26,14 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
-    "bits-ui": "^0.21.5",
+    "bits-ui": "^0.21.9",
     "buffer": "^6.0.3",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.11",
     "formsnap": "^1.0.0",
     "lucide-svelte": "^0.376.1",
     "mode-watcher": "^0.3.0",
+    "relative-time": "^1.0.0",
     "rsocket-adapter-rxjs": "^1.0.0-alpha.4",
     "rsocket-composite-metadata": "^1.0.0-alpha.3",
     "rsocket-core": "^1.0.0-alpha.3",
@@ -39,6 +41,7 @@
     "rsocket-tcp-server": "^1.0.0-alpha.3",
     "rsocket-websocket-client": "^1.0.0-alpha.3",
     "rsocket-websocket-server": "^1.0.0-alpha.3",
+    "svelte-otp": "^1.0.9",
     "svelte-radix": "^1.1.0",
     "svelte-routing": "^2.12.0",
     "svelte-sonner": "^0.3.22",

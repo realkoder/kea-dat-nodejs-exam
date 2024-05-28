@@ -59,7 +59,7 @@ class CustomRSocket {
     }
   }
 
-  fireAndForgetMessage = async (route, data) => {    
+  fireAndForget = async (route, data) => {
     return new Promise((resolve, reject) => {
       this.rsocketConnection.fireAndForget(
         {
@@ -68,7 +68,7 @@ class CustomRSocket {
         },
         {
           onError: (e) => reject(e),
-          onComplete: () => {            
+          onComplete: () => {
             resolve(null);
           },
         },
@@ -93,7 +93,7 @@ class CustomRSocket {
     });
   };
 
-  requestStream = async (route, data, chatMessages, setChatMessages) => {
+  requestStream = async (route, data, setChatMessages, removeChatMessage) => {
     return new Promise((resolve, reject) => {
       if (!this.rsocketConnection) return;
 
@@ -108,16 +108,19 @@ class CustomRSocket {
             console.error('Error in chatroom stream connection', error);
             reject(error);
           },
-          onNext: async (payload, isComplete) => {
-            const newMessage = payload.data
-              ? { ...JSON.parse(payload.data) }
-              : undefined;            
+          onNext: async (payload, isComplete) => {            
+            const data = payload.data
+              ? { ...JSON.parse(payload.data).data }
+              : undefined;
 
-            if (newMessage?.chunk?.textMessage === 'Gpt Finished message') {
+            if (data?.chunk?.textMessage === 'Gpt Finished message') {
               return;
             }
-            chatMessages.push(newMessage);
-            setChatMessages(chatMessages);
+            if (data.deleteMessageId) {
+              removeChatMessage(data.deleteMessageId);
+            } else {
+              setChatMessages(data);
+            }
           },
           onComplete: () => {
             resolve(connector);

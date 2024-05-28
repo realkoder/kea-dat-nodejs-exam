@@ -10,6 +10,16 @@ const { Request, Response, NextFunction } = express;
  * @param { NextFunction } next
  */
 
+const getUsers = async (req, res, next) => {
+  try {
+    const fetchedUsers = await UserService.getUsers();
+    if (!fetchedUsers) return res.status(400).send({ message: 'No users found' });
+    res.status(200).send({ data: fetchedUsers });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const findUserByEmail = async (req, res, next) => {
   try {
     const foundUserByEmail = await UserService.findUserByEmail(req.params.email);
@@ -42,6 +52,7 @@ const deleteUserById = async (req, res, next) => {
 };
 
 export default {
+  getUsers,
   findUserByEmail,
   deleteUserById,
   updateUserById,

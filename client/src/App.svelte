@@ -1,43 +1,36 @@
 <script>
-  import { Router, Route } from 'svelte-routing';
-  import { onMount } from 'svelte';
-  import { toast } from 'svelte-sonner';
+  import { Router, Route } from 'svelte-routing';  
   import { ModeWatcher } from 'mode-watcher';
   import { Toaster } from '$lib/components/ui/sonner';
 
   import { Buffer } from 'buffer';
   globalThis.Buffer = Buffer;
 
-  // Store
+  // STORE
   import isAuthenticated, { setAuthenticatedStatus } from './stores/authStore';
   import { BASE_URL } from './stores/generalStore';
+  import { fetchChatrooms } from './stores/chatroomStore';
 
-  // Utils
+  // SVELTE / UTILS
+  import { onMount } from 'svelte';
   import { verifyAuth, redirectToLogin } from './utils/api/auth';
-  import genericApi from './utils/api/genericApi';
 
-  // Pages
+
+  // PAGES
   import Home from './pages/Home/Home.svelte';
   import Login from './pages/Auth/Login.svelte';
   import ResetPassword from './pages/ResetPassword/ResetPassword.svelte';
+  import Chat from './pages/Chat/Chat.svelte';
+  import Verification from './pages/Verification/Verification.svelte';      
 
   export let url = '';
-
-  async function handleLogout() {
-    const data = await genericApi.GET($BASE_URL + '/api/v1/auth/logout');
-    if (data.status >= 200 && data.status <= 300) {
-      isAuthenticated.set(false);
-      toast(`You've successfully logged out!`);
-    } else {
-      toast('Something went wrong logging you out, please try again!');
-    }
-  }
 
   onMount(async () => {
     if (
       !$isAuthenticated &&
       window.location.pathname !== '/' &&
-      window.location.pathname !== '/reset-password'
+      window.location.pathname !== '/reset-password' &&
+      !window.location.pathname.includes('/verification')
     ) {
       const isAuthenticated = await verifyAuth(
         `${$BASE_URL}/api/v1/auth/verifyAuth`,
@@ -53,6 +46,7 @@
       } else {
         console.log('Setting authenticated status to true.');
         setAuthenticatedStatus(true);
+        fetchChatrooms();
       }
     }
   });
@@ -67,6 +61,8 @@
     <section>
       <Route path="/" component={Login} />
       <Route path="/home" component={Home} />
+      <Route path="/chat/:chatroomId" component={Chat} />
+      <Route path="/verification/:username" component={Verification} />
       <Route path="/reset-password" component={ResetPassword} />
     </section>
   </main>

@@ -1,11 +1,14 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "type": "module",
   "description": "Server for SSR, Authentication, DB-management and other backend related features for minified IntelliOptima exam project",
   "main": "app.js",
   "scripts": {
-    "dev": "node app.js | pino-pretty",
+    "dev": "nodemon app.js | pino-pretty",
     "watch": "NODE_ENV=development nodemon app.js | pino-pretty",
     "lint": "npx eslint . --fix",
     "format": "prettier --write \"**/*.js\"",
@@ -28,6 +31,8 @@
   },
   "homepage": "https://github.com/Alex793x/node-full-stack-kea24#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.21.1",
+    "@google-cloud/vertexai": "^1.2.0",
     "@upstash/redis": "^1.30.0",
     "bcrypt": "^5.1.1",
     "connect-redis": "^7.1.1",
@@ -43,6 +48,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.2",
     "mongoose-timestamp": "^0.6.0",
+    "openai": "^4.47.1",
     "pino": "^9.0.0",
     "pino-http": "^9.0.0",
     "rate-limit-redis": "^4.2.0",

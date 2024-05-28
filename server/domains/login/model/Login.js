@@ -5,6 +5,8 @@ const loginSchema = new mongoose.Schema({
   username: String,
   password: String,
   secretPhrase: String,
+  verificationCode: String,
+  isVerified: Boolean
 });
 
 loginSchema.plugin(timestamp);
