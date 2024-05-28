@@ -22,6 +22,7 @@
   async function handleResetPassword() {
     const resetPasswordInputs = {
       secretPhrase,
+      email,
       newPassword,
       confirmPassword,
     };
@@ -31,6 +32,7 @@
     }
     try {
       resetPasswordSchema.parse(resetPasswordInputs);
+      console.log(resetPasswordInputs);
       const response = await genericApi.PUT(
         `${$BASE_URL}/api/v1/auth/reset-password`,
         {
