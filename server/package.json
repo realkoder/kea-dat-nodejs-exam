@@ -13,8 +13,7 @@
     "watch": "NODE_ENV=development nodemon app.js | pino-pretty",
     "lint": "npx eslint . --fix",
     "format": "prettier --write \"**/*.js\"",
-    "database-create": "node app.js delete | pino-pretty",
-    "vercel-build": "echo hello"
+    "database-create": "node app.js delete | pino-pretty"    
   },
   "repository": {
     "type": "git",
