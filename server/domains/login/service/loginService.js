@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 import {
   renderEmailTemplate,
   requestPasswordResetEmailTemplate,
-  passordUpdatedEmailTemplate,
+  passwordUpdatedEmailTemplate,
   signupEmailTemplate,
 } from '../../../utils/loadEmailTemplates.js';
 import { capitalizeName } from '../../../utils/utilsFunctions.js';
@@ -128,7 +128,7 @@ async function resetPassword(user, newPassword, secretPhrase, userLogin) {
           serviceLogger.info("Login couldn't be updated");
           return null;
         }
-        const emailTemplate = renderEmailTemplate(passordUpdatedEmailTemplate, {
+        const emailTemplate = renderEmailTemplate(passwordUpdatedEmailTemplate, {
           name: capitalizeName(user.name),
           clickLink: 'http://localhost:3000/',
         });
