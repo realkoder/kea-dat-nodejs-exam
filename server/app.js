@@ -4,8 +4,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
-import path from 'path';
-import browserSync from 'browser-sync';
 
 // Logger
 import pinoHttp from 'pino-http';
@@ -77,9 +75,9 @@ app.use(httpLogger);
 app.use(errorHandlerMiddleware);
 app.use('/api/v1', ServerRoutes);
 
-// SERVER SIDE RENDERING -> 
-//                          Initially wanted to ssr, 
-//                          but it gave some issues with weird client bugs, 
+// SERVER SIDE RENDERING ->
+//                          Initially wanted to ssr,
+//                          but it gave some issues with weird client bugs,
 //                          when more tabs for same chatroom was openened
 
 // app.use(express.static(path.resolve('../client/dist')));

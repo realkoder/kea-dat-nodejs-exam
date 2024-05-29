@@ -3,8 +3,7 @@
   "builds": [
     {
       "src": "app.js",
-      "use": "@vercel/node",
-      "config": { "excludeFiles": "node_modules/browser-sync/**" }
+      "use": "@vercel/node"      
     }
   ],
   "routes": [
