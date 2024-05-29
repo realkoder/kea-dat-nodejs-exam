@@ -8,11 +8,13 @@
   "description": "Server for SSR, Authentication, DB-management and other backend related features for minified IntelliOptima exam project",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "dev": "nodemon app.js | pino-pretty",
     "watch": "NODE_ENV=development nodemon app.js | pino-pretty",
     "lint": "npx eslint . --fix",
     "format": "prettier --write \"**/*.js\"",
-    "database-create": "node app.js delete | pino-pretty"
+    "database-create": "node app.js delete | pino-pretty",
+    "vercel-build": "echo hello"
   },
   "repository": {
     "type": "git",
