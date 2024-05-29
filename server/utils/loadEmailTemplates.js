@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const __dirname = path.resolve();
+const __dirname = path.dirname(decodeURI(new URL(import.meta.url).pathname));
 
 export const signupEmailTemplate = fs.readFileSync(
   path.join(__dirname, 'public/email_templates/signup/index.html'),
