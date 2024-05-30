@@ -33,6 +33,7 @@ class CustomRSocketServer {
           return new WebSocketServer({
             // port: process.env.RSOCKET_PORT || 8085,
             server: https.createServer(serverOptions),
+            port: 8085,
           });
         },
       }),
