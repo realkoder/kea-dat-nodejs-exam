@@ -62,15 +62,13 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      domain: 'localhost',
+      path: '/',
       secure: NODE_ENV === 'production', // should be true in production
       sameSite: 'lax',
       maxAge: 3600000, // 1 hour
     },
   }),
 );
-
-console.log("LOOK", NODE_ENV);
 
 app.use(escapeXSSMiddleware);
 app.use(httpLogger);

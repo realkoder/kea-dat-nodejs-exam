@@ -7,7 +7,9 @@ const serviceLogger = prefixedLogger('🔧 [Service]: ');
 
 function generateAccessToken(payload) {
   const { exp, ...cleanPayload } = payload;
-  return jwt.sign(cleanPayload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  const jwtToken =  jwt.sign(cleanPayload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  console.log(jwtToken);
+  return jwtToken;
 }
 
 export const loginMiddleware = payload => {  
@@ -34,6 +36,7 @@ export const authenticateToken = (req, res, next) => {
       if (!payload.isVerified) return res.sendStatus(401); // User isn't verified
       const newAccessToken = generateAccessToken(payload);
       res.cookie('accessToken', newAccessToken, {
+        path: '/',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // Use secure in production
         maxAge: 15 * 1000, // 15 seconds
