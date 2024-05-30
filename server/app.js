@@ -63,9 +63,8 @@ app.use(
     saveUninitialized: true,
     cookie: {
       domain: undefined,
-      // secure: NODE_ENV === 'production', // should be true in production
-      secure: false, // should be true in production
-      sameSite: 'none',
+      secure: NODE_ENV === 'production', // should be true in production
+      sameSite: 'lax',
       maxAge: 3600000, // 1 hour
     },
   }),
