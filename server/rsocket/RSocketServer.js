@@ -1,12 +1,10 @@
 import { CompositeMetadata, WellKnownMimeType } from 'rsocket-composite-metadata';
-import { RSocketServer } from 'rsocket-core';
+import { RSocketServer, TCPServerTransport } from 'rsocket-core';
 import { WebsocketServerTransport } from 'rsocket-websocket-server';
 import { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import prefixedLogger from '../utils/logger.js';
 import messageService from '../domains/messages/service/messageService.js';
-import fs from 'fs';
-import https from 'https';
 
 import aiFactory from '../ai/providers/RegisterProviders.js';
 
