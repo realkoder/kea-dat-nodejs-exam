@@ -1,5 +1,5 @@
 import { CompositeMetadata, WellKnownMimeType } from 'rsocket-composite-metadata';
-import { RSocketServer, TCPServerTransport } from 'rsocket-core';
+import { RSocketServer } from 'rsocket-core';
 import { WebsocketServerTransport } from 'rsocket-websocket-server';
 import { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,29 +20,24 @@ class CustomRSocketServer {
   }
 
   initializeServer() {
-    // const serverOptions = {
-    //   key: fs.readFileSync('key.pem'),
-    //   cert: fs.readFileSync('cert.pem'),
-    // };
+    const serverOptions = {
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem'),
+    };
 
-    // this.server = new RSocketServer({
-    //   transport: new WebsocketServerTransport({
-    //     wsCreator: () => {
-    //       return new WebSocketServer({
-    //         // port: process.env.RSOCKET_PORT || 8085,
-    //         server: https.createServer(serverOptions),
-    //         port: 8085,
-    //       });
-    //     },
-    //   }),
-    //   fragmentation: {
-    //     maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
-    //   },
     this.server = new RSocketServer({
-      transport: new TCPServerTransport({ port: 7000 }),
+      transport: new WebsocketServerTransport({
+        wsCreator: () => {
+          return new WebSocketServer({
+            // port: process.env.RSOCKET_PORT || 8085,
+            server: https.createServer(serverOptions),
+            port: 8085,
+          });
+        },
+      }),
       fragmentation: {
         maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
-      },
+      },    
       resume: {
         cacheSize: 65536, // Size of the cache for resuming, can be adjusted
         tokenGenerator: () => Buffer.from(uuidv4().toString()),
