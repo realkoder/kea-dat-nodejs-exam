@@ -5,6 +5,8 @@ import { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import prefixedLogger from '../utils/logger.js';
 import messageService from '../domains/messages/service/messageService.js';
+import fs from 'fs';
+import https from 'https';
 
 import aiFactory from '../ai/providers/RegisterProviders.js';
 
@@ -20,11 +22,17 @@ class CustomRSocketServer {
   }
 
   initializeServer() {
+    const serverOptions = {
+      key: fs.readFileSync('../key.pem'),
+      cert: fs.readFileSync('../cert.pem'),
+    };
+
     this.server = new RSocketServer({
       transport: new WebsocketServerTransport({
         wsCreator: () => {
           return new WebSocketServer({
-            port: process.env.RSOCKET_PORT || 8085,
+            // port: process.env.RSOCKET_PORT || 8085,
+            server: https.createServer(serverOptions),
           });
         },
       }),

@@ -13,7 +13,7 @@ class CustomRSocket {
   // Method to create a new RSocket client
   async getRSocketConnection() {
     const connectorConnectionOptions = {
-      url: 'ws://192.46.234.186:8085/rsocket',
+      url: 'wss://192.46.234.186:8085/rsocket',
     };
 
     const client = new RSocketConnector({
