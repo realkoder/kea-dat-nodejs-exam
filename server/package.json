@@ -1,9 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "engines": {
-    "node": "20.*"
-  },
   "type": "module",
   "description": "Server for SSR, Authentication, DB-management and other backend related features for minified IntelliOptima exam project",
   "main": "app.js",
