@@ -36,6 +36,10 @@ const httpLogger = pinoHttp({ routerLogger, autoLogging: false }); // <--- shoul
 
 // AppInitialization
 const app = express();
+
+// Deployment relies on nginx reverse proxy
+app.set("trust proxy", true);
+
 app.use(cookieParser());
 app.use(
   helmet({
