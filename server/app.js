@@ -44,8 +44,7 @@ app.use(
 );
 app.use(
   cors({
-    // origin: true,
-    origin: 'http://localhost:3000', // your frontend URL
+    origin: true,
     credentials: true,
   }),
 );
@@ -64,7 +63,8 @@ app.use(
     saveUninitialized: true,
     cookie: {
       domain: undefined,
-      secure: NODE_ENV === 'production', // should be true in production
+      // secure: NODE_ENV === 'production', // should be true in production
+      secure: false, // should be true in production
       sameSite: 'none',
       maxAge: 3600000, // 1 hour
     },
