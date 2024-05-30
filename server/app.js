@@ -62,7 +62,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      path: '/',
+      domain: undefined,
       secure: NODE_ENV === 'production', // should be true in production
       sameSite: 'lax',
       maxAge: 3600000, // 1 hour
