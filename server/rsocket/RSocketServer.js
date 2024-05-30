@@ -22,21 +22,26 @@ class CustomRSocketServer {
   }
 
   initializeServer() {
-    const serverOptions = {
-      key: fs.readFileSync('key.pem'),
-      cert: fs.readFileSync('cert.pem'),
-    };
+    // const serverOptions = {
+    //   key: fs.readFileSync('key.pem'),
+    //   cert: fs.readFileSync('cert.pem'),
+    // };
 
+    // this.server = new RSocketServer({
+    //   transport: new WebsocketServerTransport({
+    //     wsCreator: () => {
+    //       return new WebSocketServer({
+    //         // port: process.env.RSOCKET_PORT || 8085,
+    //         server: https.createServer(serverOptions),
+    //         port: 8085,
+    //       });
+    //     },
+    //   }),
+    //   fragmentation: {
+    //     maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
+    //   },
     this.server = new RSocketServer({
-      transport: new WebsocketServerTransport({
-        wsCreator: () => {
-          return new WebSocketServer({
-            // port: process.env.RSOCKET_PORT || 8085,
-            server: https.createServer(serverOptions),
-            port: 8085,
-          });
-        },
-      }),
+      transport: new TCPServerTransport({ port: 7000 }),
       fragmentation: {
         maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
       },
