@@ -44,7 +44,8 @@ app.use(
 );
 app.use(
   cors({
-    origin: true,
+    // origin: true,
+    origin: 'http://localhost:3000', // your frontend URL
     credentials: true,
   }),
 );
