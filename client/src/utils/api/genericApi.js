@@ -31,7 +31,10 @@ function POST(url, { body, headers }) {
     body: JSON.stringify(body),
     credentials: 'include',
   })
-    .then((response) => response.json())
+    .then((response) => {
+      console.log('Set-Cookie header:', response.headers.get('Set-Cookie'));
+      return response.json();
+    })
     .then((result) => result)
     .catch((error) => handleFetchError(error));
 }
