@@ -78,7 +78,8 @@ web_modules/
 
 # openSSL keys
 key.pem
-cert.pm
+cert.pem
+csr.pem
 
 # dotenv environment variable files
 .env
