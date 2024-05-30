@@ -51,6 +51,8 @@ The client side of the application is developed using Svelte, a popular front-en
 We are using `Linode` where we have a running `ubuntu` server - this is how we deployed our `nodejs express` server.
 Setting up ubuntu env, installing npm, node, pm2 and git cloning project + executing server/app.js with pm2
 
+This tutorial has been used -> https://www.youtube.com/watch?v=sD8X4CApdpo
+
 ```bash
 # ssh to running ubuntu server
 
