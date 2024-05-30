@@ -5,6 +5,7 @@ import { WebSocketServer } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import prefixedLogger from '../utils/logger.js';
 import messageService from '../domains/messages/service/messageService.js';
+import fs from 'fs';
 
 import aiFactory from '../ai/providers/RegisterProviders.js';
 
