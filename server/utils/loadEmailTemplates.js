@@ -8,7 +8,7 @@ export const requestPasswordResetEmailTemplate = fs.readFileSync(
   './public/email_templates/request_password/index.html',
 );
 
-export const passordUpdatedEmailTemplate = fs.readFileSync('./public/email_templates/password_updated/index.html');
+export const passwordUpdatedEmailTemplate = fs.readFileSync('./public/email_templates/password_updated/index.html');
 
 export function renderEmailTemplate(emailTemplate, config = {}) {
   let renderedEmailTemplate = emailTemplate
