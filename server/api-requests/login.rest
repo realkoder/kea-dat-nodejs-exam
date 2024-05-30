@@ -8,7 +8,7 @@ Content-Type: application/json
 
 ###
 
-POST http://192.46.234.186/api/v1/auth/login
+POST https://192.46.234.186/api/v1/auth/login
 Content-Type: application/json
 
 {

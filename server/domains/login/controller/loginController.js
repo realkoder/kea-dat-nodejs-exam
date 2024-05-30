@@ -46,11 +46,13 @@ const loginWithCredentials = async (req, res, next) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use secure in production
       maxAge: 15 * 1000, // 15 seconds
+      sameSite: 'None',
     });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use secure in production
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'None',
     });
 
     return res.status(200).send({

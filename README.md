@@ -145,6 +145,9 @@ ln -s /snap/bin/certbot /usr/bin/certbot
 
 # Connect certbot with nginx, setting up ssl config
 certbot --nginx
+
+# Used to regenerate a new letsencrypt ticket before the current one in use expires
+certbot renew --dry-run
 ```
 
 <br>
