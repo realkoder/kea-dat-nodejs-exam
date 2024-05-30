@@ -65,7 +65,7 @@ app.use(
     cookie: {
       domain: undefined,
       secure: NODE_ENV === 'production', // should be true in production
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: 3600000, // 1 hour
     },
   }),
