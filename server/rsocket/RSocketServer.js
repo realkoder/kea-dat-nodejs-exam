@@ -21,11 +21,6 @@ class CustomRSocketServer {
   }
 
   initializeServer() {
-    const serverOptions = {
-      key: fs.readFileSync('key.pem'),
-      cert: fs.readFileSync('cert.pem'),
-    };
-
     this.server = new RSocketServer({
       transport: new WebsocketServerTransport({
         wsCreator: () => {
