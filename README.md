@@ -48,6 +48,31 @@ The client side of the application is developed using Svelte, a popular front-en
 
 ### Deployment
 
+#### FrontEnd
+
+SSH to linode server.
+
+```bash
+# cd into client in git project
+
+run npm install
+
+npm run build
+
+# install serve to staticly serve builded frontend svelte app
+sudo npm install -g serve
+
+# serve the app
+serve -s build
+
+# setup with pm2
+pm2 serve build 3000 --name "svelte-app"
+
+
+```
+
+#### Backend
+
 We are using `Linode` where we have a running `ubuntu` server - this is how we deployed our `nodejs express` server.
 Setting up ubuntu env, installing npm, node, pm2 and git cloning project + executing server/app.js with pm2
 
