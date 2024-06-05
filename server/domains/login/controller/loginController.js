@@ -46,13 +46,13 @@ const loginWithCredentials = async (req, res, next) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use secure in production
       maxAge: 15 * 1000, // 15 seconds
-      // sameSite: 'None',
+      sameSite: 'Strict',
     });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use secure in production
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      // sameSite: 'None',
+      sameSite: 'Strict',
     });
 
     return res.status(200).send({
@@ -92,12 +92,14 @@ const verifyLoginAccount = async (req, res, next) => {
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use secure in production
-      maxAge: 15 * 1000, // 15 seconds
+      maxAge: 15 * 1000, // 15 seconds,
+      sameSite: 'Strict',
     });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use secure in production
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'Strict',
     });
 
     return res.status(200).send({

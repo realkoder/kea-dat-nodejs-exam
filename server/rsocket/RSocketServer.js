@@ -30,15 +30,13 @@ class CustomRSocketServer {
       transport: new WebsocketServerTransport({
         wsCreator: () => {
           return new WebSocketServer({
-            // port: process.env.RSOCKET_PORT || 8085,
-            server: https.createServer(serverOptions),
-            port: 8085,
+            port: process.env.RSOCKET_PORT || 8085,
           });
         },
       }),
       fragmentation: {
         maxOutboundFragmentSize: 65536, // Set the maximum outbound fragment size
-      },    
+      },
       resume: {
         cacheSize: 65536, // Size of the cache for resuming, can be adjusted
         tokenGenerator: () => Buffer.from(uuidv4().toString()),
