@@ -59,6 +59,13 @@ run npm install
 
 npm run build
 
+# Move builded dist folder to /var/www/svelte-app
+sudo cp -r /root/kea-dat-nodejs-exam/client/dist /var/www/svelte-app
+
+# Set correct permissions
+sudo chown -R www-data:www-data /var/www/svelte-app
+sudo chmod -R 755 /var/www/svelte-app
+
 # install serve to staticly serve builded frontend svelte app
 sudo npm install -g serve
 
@@ -67,7 +74,6 @@ serve -s build
 
 # setup with pm2
 pm2 serve build 3000 --name "svelte-app"
-
 
 ```
 
