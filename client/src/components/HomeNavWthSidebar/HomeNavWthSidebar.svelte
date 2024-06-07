@@ -16,7 +16,9 @@
   import IntelliOptimaLogo from '../../assets/images/IntelliOptima_Logo.svg';
 </script>
 
-<aside class="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
+<aside
+  class="inset-y fixed left-0 z-20 flex h-full w-[11dvw] flex-col border-r"
+>
   <div class="border-b p-2">
     <Button
       variant="outline"

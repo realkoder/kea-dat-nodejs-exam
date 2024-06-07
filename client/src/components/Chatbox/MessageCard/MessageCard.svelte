@@ -15,11 +15,15 @@
     <div class="relative">
       <div class="absolute -right-12 -top-7 h-11 w-11 shrink-0">
         <div
-          class="dark:border-n-6 relative aspect-square max-w-[38em] rounded-full border-4 border-white"
+          class="dark:border-n-6 relative z-50 aspect-square max-w-[38em] rounded-full border-4 border-white"
         >
           <img
             class="z-1 rounded-full object-cover shadow-xl"
-            src={userImage}
+            src={message.userId === '1'
+              ? 'https://intellioptima.eu-central-1.linodeobjects.com/gpt.jpg'
+              : message.userId === '3'
+                ? 'https://intellioptima.eu-central-1.linodeobjects.com/claude3.png'
+                : userImage}
             alt=""
           />
         </div>
@@ -48,7 +52,7 @@
       </p>
 
       <div
-        class="dark:text-n-1 text-n-7 dark:border-n-5 border-n-3 text-body-2 relative -ml-2 mr-4 max-w-[90%] items-center overflow-auto whitespace-pre-wrap rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
+        class="dark:text-n-1 text-n-7 ml-2 dark:border-n-5 border-n-3 text-body-2 relative mr-4 max-w-[90%] items-center overflow-auto whitespace-pre-wrap rounded-lg border py-2 font-sans md:text-[14px] {message.userId ===
         $userStore.id
           ? 'dark:shadow-n-7 flex-row-reverse pl-3 pr-9 shadow-lg'
           : 'dark:shadow-n-7 pl-9 pr-3 shadow-lg'}"
