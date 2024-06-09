@@ -40,7 +40,9 @@ async function createNewUserWithLogin({ name, email, username, password, secretP
 
         const emailTemplate = renderEmailTemplate(signupEmailTemplate, {
           name: capitalizeName(name),
-          clickLink: `http://localhost:3000/verification/${createdLogin.username}`,
+          clickLink: process.env.NODE_ENV
+            ? `https://kea-exam.intellioptima.com/verification/${createdLogin.username}`
+            : `http://localhost:3000/verification/${createdLogin.username}`,
           verificationCode: verificationCodeText,
         });
 
