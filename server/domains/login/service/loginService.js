@@ -131,7 +131,8 @@ async function resetPassword(user, newPassword, secretPhrase, userLogin) {
         }
         const emailTemplate = renderEmailTemplate(passwordUpdatedEmailTemplate, {
           name: capitalizeName(user.name),
-          clickLink: 'http://localhost:3000/',
+          // clickLink: 'http://localhost:3000/',
+          clickLink: 'https://kea-exam.intellioptima.com',
         });
         const { data, error } = resend.emails
           .send({
@@ -153,7 +154,8 @@ async function resetPassword(user, newPassword, secretPhrase, userLogin) {
 async function sendEmailForPasswordReset(user) {
   const emailTemplate = renderEmailTemplate(requestPasswordResetEmailTemplate, {
     name: capitalizeName(user.name),
-    clickLink: 'http://localhost:3000/reset-password', // NODE_ENV === 'production' ? Deployed domain link
+    // clickLink: 'http://localhost:3000/reset-password', // NODE_ENV === 'production' ? Deployed domain link
+    clickLink: 'https://kea-exam.intellioptima.com/reset-password', // NODE_ENV === 'production' ? Deployed domain link
   });
   const { data, error } = await resend.emails.send({
     from: 'info@intellioptima.com',
