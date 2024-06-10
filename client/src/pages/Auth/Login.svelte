@@ -1,5 +1,4 @@
 <script lang="js">
-  // SHAD-CN
   import { navigate } from 'svelte-routing';
   import { toast } from 'svelte-sonner';
   import * as Tabs from '$lib/components/ui/tabs/index.js';
@@ -7,6 +6,7 @@
   import { Button } from '$lib/components/ui/button/index.js';
   import { Input } from '$lib/components/ui/input/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
+  import TermsAndConditions from '../../components/TermsAndConditions/TermsAndConditions.svelte';
 
   import entryImage from '../../assets/images/entry-pic.svg';
 
@@ -24,8 +24,10 @@
   let secretPhrase = '';
   let username = '';
   let password = '';
+  let termsAccepted = false;
 
   let validationErrors = {};
+  console.log('Terms accepted: ', termsAccepted);
 
   function handleLoginSubmit() {
     const loginInputs = {
@@ -40,7 +42,7 @@
           body: loginInputs,
           headers: '',
         })
-        .then((response) => {          
+        .then((response) => {
           if (response.message === 'Login successfull') {
             toast.success('Login successful!');
             userStore.update((user) => ({
@@ -104,7 +106,7 @@
     } catch (error) {
       validationErrors = error.formErrors.fieldErrors;
       console.error('Validation errors: ', validationErrors);
-      toast.error('Your credentials was not accepted.');
+      toast.error('Your credentials were not accepted.');
     }
   }
 
@@ -177,9 +179,9 @@
             <Card.Root>
               <Card.Header>
                 <Card.Title>Signup</Card.Title>
-                <Card.Description
-                  >Signup, and get your account.</Card.Description
-                >
+                <Card.Description>
+                  Signup, and get your account.
+                </Card.Description>
               </Card.Header>
               <Card.Content class="space-y-2">
                 <div class="space-y-1">
@@ -233,8 +235,13 @@
                   />
                 </div>
               </Card.Content>
-              <Card.Footer class="mx-auto flex w-max">
-                <Button type="submit">Signup New User</Button>
+              <TermsAndConditions bind:termsAccepted />
+              <Card.Footer class={`mx-auto mt-4 flex w-max ${!termsAccepted ? 'hover:cursor-not-allowed' : ''}`}>
+                <Button 
+                  disabled={!termsAccepted} 
+                  type="submit">
+                    Signup New User
+                </Button>
               </Card.Footer>
             </Card.Root>
           </form>
