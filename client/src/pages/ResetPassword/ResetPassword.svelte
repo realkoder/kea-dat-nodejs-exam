@@ -27,7 +27,7 @@
       confirmPassword,
     };
     if (newPassword !== confirmPassword) {
-      toast('Password must match, please try again');
+      toast.error('Password must match, please try again');
       return;
     }
     try {
