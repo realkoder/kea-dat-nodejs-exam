@@ -24,6 +24,7 @@
   let secretPhrase = '';
   let username = '';
   let password = '';
+  let confirmPassword;
   let termsAccepted = false;
 
   let validationErrors = {};
@@ -78,6 +79,12 @@
       password: password,
       secretPhrase: secretPhrase,
     };
+    
+    if (confirmPassword !== password) {
+      toast.error('Mismatch, passwords are not identical!')
+      return;
+    }
+
     toast.info('Creating new user with login!');
     try {
       userSchema.parse(userInputs);
@@ -219,6 +226,16 @@
                   <Input
                     id="signup-password"
                     bind:value={password}
+                    type="password"
+                    placeholder="myPassword123"
+                    required
+                  />
+                </div>
+                <div class="space-y-1">
+                  <Label for="signup-password">Confirm Password</Label>
+                  <Input
+                    id="signup-password"
+                    bind:value={confirmPassword}
                     type="password"
                     placeholder="myPassword123"
                     required
