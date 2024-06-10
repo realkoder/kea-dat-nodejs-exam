@@ -43,12 +43,13 @@ app.use(
     contentSecurityPolicy: NODE_ENV === 'production',
   }),
 );
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  }),
-);
+
+// app.use(
+//   cors({
+//     origin: true,
+//     credentials: true,
+//   }),
+// );
 
 /**
  * Disabling the 'X-Powered-By: Express' header is a security best practice to prevent potential
